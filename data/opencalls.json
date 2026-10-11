@@ -15,7 +15,21 @@
    "fee": "free",
    "link": "https://www.flashgiovani.it/bando-residenza-artistica-2026",
    "note": "Jan–May 2027, housing + €25/day. Age 18–35; check Tuscany eligibility in the call.",
-   "id": "oc00"
+   "id": "oc00",
+   "roles": [
+    "actor",
+    "artist",
+    "circus artist",
+    "composer",
+    "dancer",
+    "film composer",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "poet",
+    "sound artist",
+    "theatre maker"
+   ]
   },
   {
    "title": "Per Chi Crea 2026 — Nuove opere / Live / Professionalizzazione",
@@ -33,7 +47,26 @@
    "fee": "free",
    "link": "https://www.siae.it/it/notizie/per-chi-crea-2026/",
    "note": "Under 35, resident in Italy. Four calls; apply via perchicrea.it by 14:00.",
-   "id": "oc01"
+   "id": "oc01",
+   "roles": [
+    "actor",
+    "artist",
+    "composer",
+    "creative producer",
+    "cultural manager",
+    "dancer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "pianist",
+    "producer",
+    "sound artist",
+    "theatre maker",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "Culture Moves Europe — individual mobility grant",
@@ -51,7 +84,27 @@
    "fee": "free",
    "link": "https://culture.ec.europa.eu/culture-moves-europe/call-for-individual-mobility",
    "note": "Rolling monthly deadlines: 31 Oct, 30 Nov 2026, then Jan–Apr 2027. €85/day + travel; needs an international partner.",
-   "id": "oc02"
+   "id": "oc02",
+   "roles": [
+    "architect",
+    "artist",
+    "composer",
+    "creative producer",
+    "cultural manager",
+    "curator",
+    "dancer",
+    "designer",
+    "film composer",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "pianist",
+    "producer",
+    "sound artist",
+    "theatre maker",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "Concours musical international de Montréal — Piano 2027",
@@ -66,7 +119,12 @@
    "fee": "see rules",
    "link": "https://concoursmontreal.ca/en/piano-2027/rules/",
    "note": "Apply via Muvac by 23:59 Montréal time. Age limits apply.",
-   "id": "oc03"
+   "id": "oc03",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Leeds International Piano Competition 2027",
@@ -81,7 +139,12 @@
    "fee": "see rules",
    "link": "https://www.leedspiano.com/2027-competition/",
    "note": "First round in 7 cities, Mar–Apr 2027. Age limits apply.",
-   "id": "oc04"
+   "id": "oc04",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Valencia Iturbi International Piano Competition 2027",
@@ -96,7 +159,12 @@
    "fee": "see rules",
    "link": "https://pianoiturbi.dival.es/en/2027-competition/call/",
    "note": "Born on or after 2 June 1992.",
-   "id": "oc05"
+   "id": "oc05",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Fuse: Music Residency 2027",
@@ -113,7 +181,19 @@
    "fee": "$65 application",
    "link": "https://www.banffcentre.ca/programs/music/fuse-music-residency-2027",
    "note": "Interdisciplinary residency, 19 Apr–8 May 2027. Participant cost ~CA$3,026 after scholarship.",
-   "id": "oc06"
+   "id": "oc06",
+   "roles": [
+    "artist",
+    "composer",
+    "film composer",
+    "instrumentalist",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "pianist",
+    "singer",
+    "sound artist"
+   ]
   },
   {
    "title": "Aarhus International Piano Competition 2027",
@@ -128,7 +208,12 @@
    "fee": "see rules",
    "link": "https://pianocompetition.dk/apply-now/",
    "note": "Video pre-selection.",
-   "id": "oc07"
+   "id": "oc07",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Concorso internazionale di composizione “Alfano e la Turandot”",
@@ -143,7 +228,13 @@
    "fee": "free",
    "link": "https://www.comune.sanremo.im.it/it/news/il-bando-per-il-concorso-musicale-internazionale-di-composizione-alfano-e-la-turandot",
    "note": "New unpublished orchestral work; 3 finalists premiered by Orchestra Sinfonica di Sanremo, Dec 2026. Deadline 12:30.",
-   "id": "oc08"
+   "id": "oc08",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "Maria Canals International Piano Competition 2027",
@@ -158,7 +249,12 @@
    "fee": "€60 pre-selection",
    "link": "https://mariacanals.org/wp-content/uploads/2026/07/Reglamento-INGL_2027-1.pdf",
    "note": "Registration via Muvac by 12:00 Barcelona time.",
-   "id": "oc09"
+   "id": "oc09",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "2027 Artist Residency — The Factory",
@@ -174,7 +270,23 @@
    "fee": "free",
    "link": "https://www.artsume.com/programs/0ae5bc98-f4a9-44df-aa17-6d15b92d2456",
    "note": "12 weeks, apartment + $1,600 stipend + $350 travel. Listing via Artsume (one source said 30 Dec — confirm).",
-   "id": "oc10"
+   "id": "oc10",
+   "roles": [
+    "actor",
+    "artist",
+    "composer",
+    "dancer",
+    "designer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "photographer",
+    "sound artist",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "Golden Key Piano Composition Competition 2027",
@@ -190,7 +302,15 @@
    "fee": "$120",
    "link": "https://goldenkeyfestival.com/composition/",
    "note": "Piano-led works up to 7 min; Professional category 27+.",
-   "id": "oc11"
+   "id": "oc11",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "performer",
+    "pianist",
+    "sound artist"
+   ]
   },
   {
    "title": "Bogliasco Fellowship — Fall 2027",
@@ -206,7 +326,23 @@
    "fee": "$30 ($45 last week)",
    "link": "https://bfny.org/en/apply/requirements",
    "note": "Room, board and studio near Genoa. Next round: Spring 2028, deadline 11 Mar 2027. Two reference letters needed.",
-   "id": "oc12"
+   "id": "oc12",
+   "roles": [
+    "architect",
+    "artist",
+    "composer",
+    "dancer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "scholar",
+    "sound artist",
+    "theatre maker",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "Cleveland International Piano Competition 2027",
@@ -221,7 +357,12 @@
    "fee": "see rules",
    "link": "https://pianocleveland.org/2027-cipc/",
    "note": "Ages 18–32 as of 7 Aug 2027.",
-   "id": "oc13"
+   "id": "oc13",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "ACHROME ensemble International Call for Scores (10th ed.)",
@@ -236,7 +377,13 @@
    "fee": "min €35 per piece",
    "link": "https://ulysses-platform.eu/opportunity/achrome-ensemble-international-call-scores-202610th-edition",
    "note": "Solo or 2–5 players (fl, cl, vn, vc, piano, perc), 3–8 min, written in last 5 years. No age limit.",
-   "id": "oc14"
+   "id": "oc14",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "DAAD Artists-in-Berlin — Music & Sound 2028",
@@ -252,7 +399,18 @@
    "fee": "free",
    "link": "https://www.berliner-kuenstlerprogramm.de/en/application/",
    "note": "12-month fellowship. Window opens Nov 2026; official site says 'December', exact date TBA (15 Dec per listings).",
-   "id": "oc15"
+   "id": "oc15",
+   "roles": [
+    "artist",
+    "composer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "sound artist",
+    "writer"
+   ]
   },
   {
    "title": "Yaddo — Winter application cycle",
@@ -268,7 +426,22 @@
    "fee": "$35",
    "link": "https://yaddo.org/apply/",
    "note": "Portal opens 1 Nov; for residencies May 2027–Mar 2028. Music composition incl. electronic & sound art.",
-   "id": "oc16"
+   "id": "oc16",
+   "roles": [
+    "artist",
+    "composer",
+    "dancer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performance artist",
+    "performer",
+    "photographer",
+    "sound artist",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "Concorso “Città di Massa” — piano, cat. F (no age limit)",
@@ -283,7 +456,12 @@
    "fee": "see rules",
    "link": "http://www.edumus.com/it/annuncio/16__concorso_internazionale_per_giovani_musicisti_citta_di_massa__in_presence_edition_410395.html",
    "note": "In person, 11–14 Feb 2027, free programme up to 20 min.",
-   "id": "oc17"
+   "id": "oc17",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Ise-Shima International Composition Competition (7th)",
@@ -298,7 +476,13 @@
    "fee": "¥5,000 (¥7,000 last 14 days)",
    "link": "https://en.iseshimaart.com/international-composition-competiti",
    "note": "Score or recording; no age or nationality limit.",
-   "id": "oc18"
+   "id": "oc18",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "ISAC Popular & Media Music Composition Competition 2027",
@@ -314,7 +498,19 @@
    "fee": "¥5,000 (¥7,000 after 17 Jan)",
    "link": "https://en.iseshimaart.com/popular-media-composition-application-2027",
    "note": "Recording link required; media/film/game/pop music.",
-   "id": "oc19"
+   "id": "oc19",
+   "roles": [
+    "composer",
+    "creative producer",
+    "cultural manager",
+    "film composer",
+    "game composer",
+    "lyricist",
+    "musician",
+    "producer",
+    "songwriter",
+    "sound artist"
+   ]
   },
   {
    "title": "Concorso internazionale di composizione per banda — Corciano 2027",
@@ -329,7 +525,13 @@
    "fee": "see rules",
    "link": "https://www.umbriasocial.it/2026/06/corciano-lancia-il-concorso-internazionale-di-composizione-per-banda-aperte-le-iscrizioni-alledizione-2027/",
    "note": "Wind band; 1st prize €4,000. No generative AI. Rules on corcianoinbanda.it.",
-   "id": "oc20"
+   "id": "oc20",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "Szymanowski Competition 2027 — piano",
@@ -344,7 +546,12 @@
    "fee": "see rules",
    "link": "https://szymanowski-competition.com/en/competition-category/composition/",
    "note": "Performance categories apply 1 Nov 2026–31 Jan 2027. Age limits apply.",
-   "id": "oc21"
+   "id": "oc21",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "MacDowell Fellowship — Fall/Winter 2027-28",
@@ -360,7 +567,21 @@
    "fee": "see site",
    "link": "https://www.macdowell.org/apply/apply-for-fellowship",
    "note": "Opens 15 Jan 2027. Music composition and interdisciplinary arts, any country.",
-   "id": "oc22"
+   "id": "oc22",
+   "roles": [
+    "architect",
+    "artist",
+    "composer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "sound artist",
+    "theatre maker",
+    "visual artist",
+    "writer"
+   ]
   },
   {
    "title": "OTICONS Faculty Film Music Competition 2027",
@@ -375,7 +596,13 @@
    "fee": "see site (early bird to 1 Jan)",
    "link": "https://faculty.oticons.com/",
    "note": "Three scoring assignments; jury feedback letter.",
-   "id": "oc23"
+   "id": "oc23",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "Preisner Scoring Competition 2027",
@@ -390,7 +617,13 @@
    "fee": "see rules",
    "link": "https://preisnercompetition.com/",
    "note": "Score a 7'18\" film; €25,000 prize. Ages 18–35.",
-   "id": "oc24"
+   "id": "oc24",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "Hamamatsu International Piano Competition (13th)",
@@ -405,7 +638,12 @@
    "fee": "¥20,000",
    "link": "https://hipic.jp/en/prospectus/procedures/",
    "note": "Applications 8 Jan–28 Feb 2027. Age limits apply.",
-   "id": "oc25"
+   "id": "oc25",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "PianoFVG — 27th International Piano Competition",
@@ -420,7 +658,12 @@
    "fee": "see rules",
    "link": "https://www.pianofvg.eu/it/iscrizioni-2027/",
    "note": "Registrations 7 Jan–7 Mar 2027.",
-   "id": "oc26"
+   "id": "oc26",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Scheherazade Music Festival — Call for Scores 2027",
@@ -435,7 +678,13 @@
    "fee": "free",
    "link": "https://www.scheherazademusicfestival.com/call-for-scores",
    "note": "Voice, flute, sax & piano, 5–12 min. $500 + premiere.",
-   "id": "oc27"
+   "id": "oc27",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   },
   {
    "title": "Concorso “Giovani Musicisti — Città di Treviso” (piano, contemporary, adult cat. S)",
@@ -451,7 +700,15 @@
    "fee": "€60",
    "link": "https://www.studiomusicatreviso.it/Concorso_2027/concorso_ITA.php",
    "note": "Auditions 16–18 Apr 2027. Contemporary music section accepts unpublished works.",
-   "id": "oc28"
+   "id": "oc28",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "performer",
+    "pianist",
+    "sound artist"
+   ]
   },
   {
    "title": "Clara Haskil International Piano Competition 2027",
@@ -466,7 +723,12 @@
    "fee": "€100",
    "link": "https://clara-haskil.ch/wp-content/uploads/2026/04/CCH-2027-reglement-EN.pdf",
    "note": "Age limits apply.",
-   "id": "oc29"
+   "id": "oc29",
+   "roles": [
+    "musician",
+    "performer",
+    "pianist"
+   ]
   },
   {
    "title": "Szymanowski Competition 2027 — composition",
@@ -481,7 +743,13 @@
    "fee": "see rules",
    "link": "https://szymanowski-competition.com/en/competition-category/composition/",
    "note": "Submissions 1 Jan–30 Apr 2027; final gala 19 Sep 2027.",
-   "id": "oc30"
+   "id": "oc30",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "sound artist"
+   ]
   }
  ]
 }
