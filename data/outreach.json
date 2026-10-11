@@ -1,0 +1,165 @@
+{
+ "updated": "2026-10-11",
+ "items": [
+  {
+   "id": "terraforma",
+   "name": "Terraforma",
+   "kind": "festival",
+   "place": "Milan, Italy",
+   "why": "Experimental music festival in Villa Arconati's park: sound installations and long-form listening fit the DREAMeSCAPE.",
+   "link": "https://x.com/terraformafest"
+  },
+  {
+   "id": "c2c",
+   "name": "Club To Club",
+   "kind": "festival",
+   "place": "Turin, Italy",
+   "why": "Italy's reference for forward-looking electronic and avant-pop; a stage for crossover live sets.",
+   "link": "https://clubtoclub.it/"
+  },
+  {
+   "id": "romaeuropa",
+   "name": "Romaeuropa Festival",
+   "kind": "festival",
+   "place": "Rome, Italy",
+   "why": "Multidisciplinary festival (music, dance, theatre, digital) — the natural home for an 'architect of emotions'.",
+   "link": "https://romaeuropa.net/contatti/"
+  },
+  {
+   "id": "biennale",
+   "name": "La Biennale di Venezia — Musica",
+   "kind": "festival",
+   "place": "Venice, Italy",
+   "why": "Contemporary music sector with Biennale College calls for young composers and performers.",
+   "link": "https://www.labiennale.org/en/music"
+  },
+  {
+   "id": "mito",
+   "name": "MITO SettembreMusica",
+   "kind": "festival",
+   "place": "Milan & Turin, Italy",
+   "why": "Large classical/contemporary festival with piano recitals and new commissions.",
+   "link": "https://www.mitosettembremusica.it/it"
+  },
+  {
+   "id": "ravenna",
+   "name": "Ravenna Festival",
+   "kind": "festival",
+   "place": "Ravenna, Italy",
+   "why": "Interdisciplinary summer festival mixing music, theatre and dance in historic sites.",
+   "link": "https://www.ravennafestival.org/"
+  },
+  {
+   "id": "flussi",
+   "name": "Flussi",
+   "kind": "festival",
+   "place": "Avellino, Italy",
+   "why": "Digital arts and electronic music festival — sound installation and audiovisual work.",
+   "link": "https://www.flussi.org/"
+  },
+  {
+   "id": "unsound",
+   "name": "Unsound",
+   "kind": "festival",
+   "place": "Kraków, Poland",
+   "why": "Adventurous music festival with commissioned audiovisual and installation projects.",
+   "link": "https://www.unsound.pl/en/2026/warszawa-krakow"
+  },
+  {
+   "id": "ctm",
+   "name": "CTM Festival",
+   "kind": "festival",
+   "place": "Berlin, Germany",
+   "why": "Adventurous music & art festival with exhibitions and open calls (e.g. radio lab).",
+   "link": "https://www.ctm-festival.de/"
+  },
+  {
+   "id": "sonar",
+   "name": "Sónar+D",
+   "kind": "festival",
+   "place": "Barcelona, Spain",
+   "why": "Creativity & technology congress inside Sónar — fits the launcher/app suite and the installation.",
+   "link": "https://sonar.es/en"
+  },
+  {
+   "id": "auditorium",
+   "name": "Auditorium Parco della Musica",
+   "kind": "venue",
+   "place": "Rome, Italy",
+   "why": "Rome's main music venue, with contemporary and crossover programming.",
+   "link": "https://www.auditorium.com/it/"
+  },
+  {
+   "id": "triennale",
+   "name": "Triennale Milano",
+   "kind": "venue",
+   "place": "Milan, Italy",
+   "why": "Design/art institution with a live music and performance programme (Triennale Estate, FOG).",
+   "link": "https://triennale.org/"
+  },
+  {
+   "id": "hangar",
+   "name": "Pirelli HangarBicocca",
+   "kind": "gallery",
+   "place": "Milan, Italy",
+   "why": "Large-scale installation space; immersive sound works fit its programme.",
+   "link": "https://pirellihangarbicocca.org/"
+  },
+  {
+   "id": "merz",
+   "name": "Fondazione Merz",
+   "kind": "gallery",
+   "place": "Turin, Italy",
+   "why": "Contemporary art foundation with sound and performance projects.",
+   "link": "https://www.fondazionemerz.org/"
+  },
+  {
+   "id": "continua",
+   "name": "Galleria Continua",
+   "kind": "gallery",
+   "place": "San Gimignano, Italy (+ Paris, Beijing…)",
+   "why": "International gallery born in Tuscany, open to installation and performance.",
+   "link": "https://www.galleriacontinua.com/"
+  },
+  {
+   "id": "erased",
+   "name": "Erased Tapes",
+   "kind": "label",
+   "place": "London, UK",
+   "why": "Home of modern-classical/piano-electronic artists (Nils Frahm, Ólafur Arnalds) — close to your piano pieces.",
+   "link": "https://www.erasedtapes.com/"
+  },
+  {
+   "id": "mercurykx",
+   "name": "Mercury KX",
+   "kind": "label",
+   "place": "London, UK (Decca/Universal)",
+   "why": "Label for post-classical and piano-led crossover music.",
+   "link": "https://www.mercurykx.com/"
+  },
+  {
+   "id": "sonicpieces",
+   "name": "Sonic Pieces",
+   "kind": "label",
+   "place": "Berlin, Germany",
+   "why": "Small label for intimate piano and ambient records with crafted physical editions.",
+   "link": "https://sonicpieces.com/"
+  },
+  {
+   "id": "rukus",
+   "name": "Mikey Rukus",
+   "kind": "person",
+   "place": "USA",
+   "why": "AEW's in-house composer: the living wrestling-music crossover — ideal for the book or a collaboration.",
+   "link": "https://x.com/MikeyRukus"
+  },
+  {
+   "id": "aew",
+   "name": "All Elite Wrestling (AEW)",
+   "kind": "company",
+   "place": "USA",
+   "why": "Wrestling promotion that commissions entrance music; pitch the wrestling × music idea.",
+   "link": "https://www.allelitewrestling.com/"
+  }
+ ]
+}
