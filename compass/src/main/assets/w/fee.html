@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f5">
-<title>Fee book — Laurence Who</title>
+<title>Fee book</title>
 <style>
   :root {
     --bg: #f7f7f5;
@@ -30,7 +30,7 @@
   header h1 { font-weight: 500; font-size: 1.55rem; margin: 0; letter-spacing: -0.02em; }
   .langbar { display: flex; justify-content: flex-start; margin-bottom: 14px; }
   button.lang { letter-spacing: 0.04em; }
-  main { max-width: 860px; margin: 0 auto; padding: 12px 18px 64px; }
+  main { max-width: 860px; margin: 0 auto; padding: 12px 18px 140px; }
   .card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -83,11 +83,26 @@
 </head>
 <body>
 <header>
-  <div class="langbar"><button class="lang" id="langBtn" type="button">Italiano</button></div>
+  <div class="langbar" style="justify-content:space-between"><button class="lang" id="langBtn" type="button">Italiano</button><button id="gearBtn" type="button" aria-label="Settings">⚙ Settings</button></div>
   <h1 id="title">Fee book</h1>
-  <p>Laurence Who</p>
+  <p id="who"></p>
 </header>
 <main>
+  <div class="card" id="settings" style="display:none">
+    <h2 style="font-weight:500;margin:0 0 8px">Settings</h2>
+    <p class="note" id="firstRun" style="display:none;color:var(--ink)">Welcome. Set your own values to start. They stay on this device only.</p>
+    <label>Your name (for the agreement)</label><input id="setName" placeholder="e.g. your full name">
+    <label>Standard fee (€ per hour)</label><input id="setStd" inputmode="decimal" placeholder="e.g. 30">
+    <p class="note">Your base. Every other fee scales from it with the same formulas.</p>
+    <label>Home city</label><input id="setHome" placeholder="e.g. your city">
+    <label>Daily bus fee (€ per day)</label><input id="setBus" inputmode="decimal" placeholder="e.g. 3.10">
+    <p class="note">Added once for each day of work when Bus is on, home city included.</p>
+    <h2 style="font-weight:500;margin:18px 0 4px;font-size:1.1rem">Services</h2>
+    <p class="note">Hourly: rate × standard fee per hour. Block: base × standard fee for the included minutes, then + extra × standard fee per step.</p>
+    <div id="svcList"></div>
+    <div class="row-actions"><button id="svcAdd" type="button">Add a service type</button><button id="svcReset" type="button" class="danger">Load examples</button></div>
+    <div class="row-actions"><button class="solid" id="setDone" type="button">Done</button></div>
+  </div>
   <div class="card">
     <div class="grid">
       <div>
@@ -104,6 +119,8 @@
       <div class="stat"><span data-i18n="disc">Discount if criteria met</span><b id="disc">—</b></div>
       <div class="stat"><span data-i18n="low">Lowest charge</span><b id="low">—</b></div>
     </div>
+    <div class="work" style="display:flex;justify-content:space-between;align-items:center"><div><label style="margin:0">Bus</label><span class="note" id="busNote">Off</span></div><button id="busBtn" type="button">Off</button></div>
+    <p class="note" id="forLine" style="color:var(--ink)"></p>
     <p class="note" data-i18n="hint">Discount appears only when the package is at least €100, there are at least two services, and half the gap between total charges and rounded fees is not zero. It is that half, rounded up to €5. Lowest charge is package minus discount, rounded down to €5.</p>
     <div id="works"></div>
     <div class="row-actions">
@@ -116,13 +133,6 @@
     <pre class="contract" id="contract"></pre>
   </div>
 </main>
-<datalist id="stations">
-  <option>Studio</option><option>Udine</option><option>Buttrio</option><option>Manzano</option>
-  <option>San Giovanni al Natisone</option><option>Cormons</option><option>Gorizia Centrale</option>
-  <option>Sagrado</option><option>Ronchi dei Legionari Nord</option><option>Monfalcone</option>
-  <option>Palmanova</option><option>Cervignano-Aquileia-Grado</option><option>Sistiana-Visogliano</option>
-  <option>Bivio d'Aurisina</option><option>Trieste Centrale</option>
-</datalist>
 <script>
 const LEVELS = {
   easy: 0.5, simple: 0.5, beginner: 0.8, basic: 0.8, normal: 1,
@@ -131,14 +141,19 @@ const LEVELS = {
   "extremely hard": 2, "extremely difficult": 2, expert: 2, virtuoso: 2,
   virtuosistic: 2, virtuosic: 2
 };
-const STATIONS = [
-  ["Udine", 0], ["Buttrio", 3], ["Manzano", 5], ["San Giovanni al Natisone", 6.5],
-  ["Cormons", 7.8], ["Gorizia Centrale", 9.5], ["Sagrado", 11.1],
-  ["Ronchi dei Legionari Nord", 13.5], ["Monfalcone", 13.5], ["Palmanova", 6.5],
-  ["Cervignano-Aquileia-Grado", 7.8], ["Sistiana-Visogliano", 16],
-  ["Bivio d'Aurisina", 16], ["Trieste Centrale", 20.6]
+const STATIONS = [];
+const EXAMPLES = [
+  { name: "Rehearsal", mode: "hourly", rate: 1, notice: true },
+  { name: "Lesson", mode: "hourly", rate: 1, notice: true },
+  { name: "Private lesson", mode: "hourly", rate: 35/30, notice: false },
+  { name: "Exam", mode: "block", base: 1, incl: 10, step: 5, extra: 1/6, round: true, notice: true },
+  { name: "Concert", mode: "block", base: 200/30, incl: 30, step: 15, extra: 50/30, notice: true },
+  { name: "Graduation", mode: "block", base: 100/30, incl: 30, step: 15, extra: 25/30, notice: true },
+  { name: "Accompaniment", mode: "hourly", rate: 1, notice: true }
 ];
-const TYPES = ["Rehearsal", "Exam", "Concert", "Lesson", "Private lesson", "Piano lesson", "Graduation", "Accompaniment", "Chamber music lesson"];
+let SERVICES = (() => { try { return JSON.parse(localStorage.getItem("fee_services")) || EXAMPLES.slice(); } catch (e) { return EXAMPLES.slice(); } })();
+const svcOf = name => SERVICES.find(x => x.name.toLowerCase().trim() === (name || "").toLowerCase().trim());
+let TYPES = SERVICES.map(x => x.name);
 const COPY = {
   en: {
     btn: "Italiano", title: "Fee book", name: "Full name", namePh: "Client name", request: "Request date",
@@ -174,8 +189,8 @@ function daysBetween(request, date) {
   return Math.round((b - a) / 86400000);
 }
 function shortNotice(type, d) {
-  const t = type.toLowerCase().trim();
-  if (t === "private lesson" || t === "piano lesson") return 0;
+  const sv = svcOf(type);
+  if (sv && sv.notice === false) return 0;
   if (d == null || d < 0 || d >= 7) return 0;
   if (d >= 5) return 5;
   if (d >= 3) return 10;
@@ -183,30 +198,33 @@ function shortNotice(type, d) {
   if (d === 1) return 25;
   return 30;
 }
-function baseFee(type, dur) {
-  const t = type.toLowerCase().trim();
-  if (t === "private lesson" || t === "piano lesson") return dur / 60 * 35;
-  if (t === "exam") return 30 + Math.round((dur - 10) / 5) * 5;
-  if (t === "concert") return 200 + (dur > 30 ? (dur - 30) / 15 * 50 : 0);
-  if (t === "graduation") return 100 + (dur > 30 ? (dur - 30) / 15 * 25 : 0);
-  return dur / 60 * 30;
+let SET = (() => { try { return Object.assign({ std: 0, home: "", bus: 0, name: "", busOn: false }, JSON.parse(localStorage.getItem("fee_set")) || {}); } catch (e) { return { std: 0, home: "", bus: 0, name: "", busOn: false }; } })();
+const saveSet = () => localStorage.setItem("fee_set", JSON.stringify(SET));
+function baseFee(type, dur) { return baseFee0(type, dur) * SET.std / 30; }
+function baseFee0(type, dur) {
+  const sv = svcOf(type) || { mode: "hourly", rate: 1 };
+  if (sv.mode === "block") {
+    const x = (dur - sv.incl) / sv.step;
+    return sv.base * 30 + (sv.round ? Math.round(x) : (dur > sv.incl ? x : 0)) * sv.extra * 30;
+  }
+  return dur / 60 * sv.rate * 30;
 }
 function trainFare(location) {
   const loc = (location || "").trim();
-  if (!loc || loc.toLowerCase() === "udine") return "";
+  return "";
   const hit = STATIONS.find(s => s[0].toLowerCase().includes(loc.toLowerCase()) || loc.toLowerCase().includes(s[0].toLowerCase()));
   return hit ? hit[1] : "";
 }
 function calcItem(item, request) {
   const type = (item.type || "").trim();
   const dur = Number(item.duration);
-  if (!type || !dur) return { standard: "", charged: "", bus: "", train: "", travel: "", subtotal: "", rounded: "", total: "" };
+  if (!type || !dur || !SET.std) return { standard: "", charged: "", bus: "", train: "", travel: "", subtotal: "", rounded: "", total: "" };
   const d = daysBetween(request, item.date);
-  const standard = Math.max(20, baseFee(type, dur) + shortNotice(type, d));
+  const standard = Math.max(20 * SET.std / 30, baseFee(type, dur) + shortNotice(type, d) * SET.std / 30);
   const mult = LEVELS[(item.level || "").toLowerCase().trim()];
   const charged = mult == null ? "Redefine" : standard * mult;
   const loc = (item.location || "").trim();
-  const bus = (!loc || ["studio", "type", "forfeit"].includes(loc.toLowerCase())) ? "" : 3.1;
+  const bus = (SET.busOn && item._firstOfDay) ? SET.bus : "";
   const train = trainFare(loc);
   const local = item.local === "" || item.local == null ? "" : Number(item.local);
   const travel = (bus === "" && train === "" && local === "") ? "" : (Number(bus) || 0) + (Number(train) || 0) + (Number(local) || 0);
@@ -249,7 +267,8 @@ function agreement(name, items, pkg, disc, low) {
       ? (lang === "it" ? "Accompagnamento pianistico" : "Piano accompaniment")
       : (lang === "it" ? "Accompagnamento pianistico per " : "Piano accompaniment for ") + [lessonText, rehearsalText, examText, concertText].filter(Boolean).join(", ");
   }
-  const services = !chamber ? accompText : (!accompText ? chamberText : accompText + ", " + chamberText);
+  const byName = {}; items.forEach(i => { if (i.type && i.duration) byName[i.type] = (byName[i.type] || 0) + 1; });
+  const services = Object.keys(byName).map(k => numWord(byName[k]) + " × " + ((t("types") || {})[k] || k)).join(", ");
   const money = n => "€" + Number(n).toFixed(2);
   let pay = "☐ " + money(pkg) + (lang === "it" ? " totale pacchetto" : " total package");
   if (disc !== "" && low !== "" && low !== pkg) {
@@ -260,14 +279,14 @@ function agreement(name, items, pkg, disc, low) {
   const today = new Date();
   const dd = String(today.getDate()).padStart(2,"0") + "/" + String(today.getMonth()+1).padStart(2,"0") + "/" + today.getFullYear();
   if (lang === "it") {
-    return "ACCORDO DI SERVIZIO\n\nQuesto accordo conferma i servizi concordati tra Lorenzo Ritacco e " + name + ".\n\nSERVIZI\n" + services + "\n\nPAGAMENTO\n" + pay + "\n\nANNULLAMENTO / IMPEGNO PERSO\nPer ogni impegno perso, " + name + " si impegna a pagare la tariffa base di quel singolo impegno.\n\nFirmando, entrambe le parti confermano di aver letto, compreso e accettato i termini sopra.\n\nDATA: " + dd + "\nLUOGO: Udine\n\n" + name + "                                      Lorenzo Ritacco";
+    return "ACCORDO DI SERVIZIO\n\nQuesto accordo conferma i servizi concordati tra " + (SET.name || "—") + " e " + name + ".\n\nSERVIZI\n" + services + "\n\nPAGAMENTO\n" + pay + "\n\nANNULLAMENTO / IMPEGNO PERSO\nPer ogni impegno perso, " + name + " si impegna a pagare la tariffa base di quel singolo impegno.\n\nFirmando, entrambe le parti confermano di aver letto, compreso e accettato i termini sopra.\n\nDATA: " + dd + "\nLUOGO: " + (SET.home || "—") + "\n\n" + name + "                                      " + (SET.name || "—") + "";
   }
-  return "SERVICE AGREEMENT\n\nThis agreement confirms the service(s) agreed between Lorenzo Ritacco and " + name + ".\n\nSERVICES\n" + services + "\n\nPAYMENT\n" + pay + "\n\nCANCELLATION / LOST COMMITMENT\nFor any lost commitment, " + name + " agrees to pay the basic fee of that individual commitment.\n\nBy signing below, both parties confirm that they have read, understood, and agreed to the terms above.\n\nDATE: " + dd + "\nPLACE: Udine\n\n" + name + "                                      Lorenzo Ritacco";
+  return "SERVICE AGREEMENT\n\nThis agreement confirms the service(s) agreed between " + (SET.name || "—") + " and " + name + ".\n\nSERVICES\n" + services + "\n\nPAYMENT\n" + pay + "\n\nCANCELLATION / LOST COMMITMENT\nFor any lost commitment, " + name + " agrees to pay the basic fee of that individual commitment.\n\nBy signing below, both parties confirm that they have read, understood, and agreed to the terms above.\n\nDATE: " + dd + "\nPLACE: " + (SET.home || "—") + "\n\n" + name + "                                      " + (SET.name || "—") + "";
 }
 
 let items = [];
 function blankItem() {
-  return { date: "", time: "", type: "Rehearsal", duration: "", level: "Normal", location: "", local: "", travelTime: "" };
+  return { date: "", time: "", type: TYPES[0] || "", duration: "", level: "Normal", location: "", local: "", travelTime: "" };
 }
 function readItemsFromDom() {
   document.querySelectorAll("#works .work").forEach((block, i) => {
@@ -279,7 +298,10 @@ function updateFigures() {
   readItemsFromDom();
   const request = document.getElementById("request").value;
   const name = document.getElementById("name").value.trim();
+  const seen = new Set(); items.forEach(it => { const k = it.date || ("#" + Math.random()); it._firstOfDay = !seen.has(k); seen.add(k); });
   const calced = items.map(item => calcItem(item, request));
+  const days = new Set(items.filter(it => it.duration).map(it => it.date)).size; const mins = items.reduce((a, it) => a + (Number(it.duration) || 0), 0);
+  document.getElementById("forLine").textContent = "Total calculated from the job's time and days: " + days + (days === 1 ? " day" : " days") + " · " + Math.floor(mins / 60) + " h " + (mins % 60) + " min of work.";
   document.querySelectorAll("#works .work").forEach((block, i) => {
     const row = calced[i] || {};
     const note = block.querySelector(".figures");
@@ -314,10 +336,10 @@ function renderWorks() {
       <div class="grid">
         <div><label>${t("date")}</label><input data-k="date" type="date" value="${item.date || ""}"></div>
         <div><label>${t("time")}</label><input data-k="time" type="time" value="${item.time || ""}"></div>
-        <div><label>${t("type")}</label><select data-k="type">${TYPES.map(tp => `<option value="${tp}" ${tp === item.type ? "selected" : ""}>${t("types")[tp]}</option>`).join("")}</select></div>
+        <div><label>${t("type")}</label><select data-k="type">${TYPES.map(tp => `<option value="${tp}" ${tp === item.type ? "selected" : ""}>${((t("types") || {})[tp] || tp)}</option>`).join("")}</select></div>
         <div><label>${t("minutes")}</label><input data-k="duration" inputmode="numeric" value="${item.duration || ""}"></div>
         <div><label>${t("level")}</label><select data-k="level">${Object.keys(LEVELS).map(lv => `<option value="${lv}" ${lv === (item.level || "").toLowerCase() ? "selected" : ""}>${lv}</option>`).join("")}</select></div>
-        <div><label>${t("place")}</label><input data-k="location" list="stations" value="${item.location || ""}" placeholder="${t("placePh")}"></div>
+        <div><label>${t("place")}</label><input data-k="location" value="${item.location || ""}" placeholder="${t("placePh")}"></div>
         <div><label>${t("local")}</label><input data-k="local" inputmode="decimal" value="${item.local || ""}"></div>
         <div><label>${t("travel")}</label><input data-k="travelTime" inputmode="numeric" value="${item.travelTime || ""}"></div>
       </div>
@@ -348,6 +370,26 @@ function applyLang() {
 }
 document.getElementById("langBtn").onclick = () => { lang = lang === "en" ? "it" : "en"; applyLang(); };
 renderWorks();
+
+function busUi(){ const b=document.getElementById("busBtn"); b.textContent=SET.busOn?"On":"Off"; b.className=SET.busOn?"solid":""; document.getElementById("busNote").textContent=SET.busOn?euro(SET.bus)+" per day, home city included":"Off · no daily bus fee"; }
+document.getElementById("busBtn").onclick=()=>{SET.busOn=!SET.busOn;saveSet();busUi();updateFigures();};
+document.getElementById("gearBtn").onclick=()=>{const s=document.getElementById("settings");s.style.display=s.style.display==="none"?"":"none";};
+function svcUi(){ const h=document.getElementById("svcList"); h.innerHTML=""; SERVICES.forEach((sv,i)=>{ const d=document.createElement("div"); d.className="work";
+  const f=(k,lab,v)=>`<div><label>${lab}</label><input data-s="${k}" inputmode="decimal" value="${v==null?"":+(+v).toFixed(4)}"></div>`;
+  d.innerHTML=`<div class="grid"><div><label>Name</label><input data-s="name" value="${sv.name.replace(/"/g,"&quot;")}"></div><div><label>Type</label><select data-s="mode"><option value="hourly" ${sv.mode!=="block"?"selected":""}>hourly</option><option value="block" ${sv.mode==="block"?"selected":""}>block</option></select></div>`+
+   (sv.mode==="block"?f("base","Base (× standard)",sv.base)+f("incl","Included minutes",sv.incl)+f("step","Step (min)",sv.step)+f("extra","Extra per step (× standard)",sv.extra):f("rate","Rate (× standard per hour)",sv.rate)+"<div></div>")+
+   `<div><label>Short-notice surcharge</label><select data-s="notice"><option value="1" ${sv.notice!==false?"selected":""}>yes</option><option value="0" ${sv.notice===false?"selected":""}>no</option></select></div></div><div class="row-actions"><button class="danger" type="button">Remove</button></div>`;
+  d.querySelector("button").onclick=()=>{SERVICES.splice(i,1);svcSave();svcUi();};
+  d.querySelectorAll("[data-s]").forEach(el=>el.onchange=()=>{const k=el.dataset.s; if(k==="name"||k==="mode") sv[k]=el.value; else if(k==="notice") sv.notice=el.value==="1"; else sv[k]=Number(el.value)||0;
+   if(k==="mode"&&sv.mode==="block"){sv.base=sv.base||1;sv.incl=sv.incl||30;sv.step=sv.step||15;sv.extra=sv.extra||0.5;} svcSave(); if(k==="mode") svcUi();});
+  h.appendChild(d); }); }
+function svcSave(){ localStorage.setItem("fee_services",JSON.stringify(SERVICES)); TYPES=SERVICES.map(x=>x.name); readItemsFromDom(); renderWorks(); }
+document.getElementById("svcAdd").onclick=()=>{SERVICES.push({name:"New service",mode:"hourly",rate:1,notice:true});svcSave();svcUi();};
+document.getElementById("svcReset").onclick=()=>{SERVICES=EXAMPLES.slice().map(x=>Object.assign({},x));svcSave();svcUi();};
+function loadSetUi(){ setStd.value=SET.std||""; setHome.value=SET.home||""; setBus.value=SET.bus||""; setName.value=SET.name||""; document.getElementById("who").textContent=SET.name||""; }
+document.getElementById("setDone").onclick=()=>{SET.std=Number(setStd.value.replace(",","."))||0;SET.home=setHome.value.trim();SET.bus=Number(setBus.value.replace(",","."))||0;SET.name=setName.value.trim();saveSet();loadSetUi();document.getElementById("settings").style.display="none";firstRun.style.display="none";updateFigures();busUi();};
+loadSetUi(); svcUi(); busUi();
+if (!SET.std) { document.getElementById("settings").style.display=""; firstRun.style.display=""; }
 </script>
 </body>
 </html>

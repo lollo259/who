@@ -2,8 +2,8 @@ plugins { id 'com.android.application' }
 android {
   namespace 'com.laurencewho.career'
   compileSdk 34
-  lint { abortOnError false; checkReleaseBuilds false }
-  defaultConfig { applicationId 'com.laurencewho.career'; minSdk 26; targetSdk 34; versionCode 6; versionName '0.6' }
+  lint { abortOnError false; checkReleaseBuilds false; textReport true; textOutput file("build/lint.txt") }
+  defaultConfig { applicationId 'com.laurencewho.career'; minSdk 26; targetSdk 34; versionCode 7; versionName '0.7' }
   aaptOptions { noCompress 'm4a' }
   signingConfigs { release { storeFile file('/workspace/apps/keys/quiet.jks'); storePassword System.getenv('QKS_PASS'); keyAlias 'quiet'; keyPassword System.getenv('QKS_PASS') } }
   buildTypes { release { minifyEnabled false; signingConfig signingConfigs.release } }
