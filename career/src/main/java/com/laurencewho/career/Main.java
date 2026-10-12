@@ -58,7 +58,7 @@ public class Main extends Activity{
  static Set<String> expand(String j){Set<String> o=new LinkedHashSet<>();o.add(j);for(String[] g:SYN)for(String w:g)if(w.equals(j)||(j.length()>3&&w.startsWith(j))){o.addAll(Arrays.asList(g));break;}return o;}
  // ---------- open calls
  View callsPage(){LinearLayout l=new LinearLayout(this);ScrollView s=scroller(l);pull(s);
-  EditText jobs=new EditText(this);jobs.setText(sp.getString("jobs",""));jobs.setHint("my jobs — pianist, composer, creative producer");jobs.setHintTextColor(dim);jobs.setTextColor(fg);jobs.setTextSize(14);jobs.setTypeface(hv);jobs.setGravity(Gravity.CENTER);jobs.setSingleLine(true);jobs.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dim));
+  EditText jobs=new EditText(this);jobs.setText(sp.getString("jobs","pianist, composer, artist"));jobs.setHint("my jobs — pianist, composer, creative producer");jobs.setHintTextColor(dim);jobs.setTextColor(fg);jobs.setTextSize(14);jobs.setTypeface(hv);jobs.setGravity(Gravity.CENTER);jobs.setSingleLine(true);jobs.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dim));
   LinearLayout list=new LinearLayout(this);list.setOrientation(LinearLayout.VERTICAL);TextView sub=center("",11,dim);
   Runnable draw=()->drawCalls(list,sub,jobs.getText().toString());
   jobs.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence a,int b,int c,int d){}public void onTextChanged(CharSequence a,int b,int c,int d){}public void afterTextChanged(Editable e){sp.edit().putString("jobs",e.toString()).apply();draw.run();}});
