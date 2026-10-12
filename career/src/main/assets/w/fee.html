@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f5">
+<title>Fee book — Laurence Who</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --ink: #1a1a1a;
+    --muted: #6f6f6a;
+    --line: #e4e4e0;
+    --card: #ffffff;
+    --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  header {
+    padding: 22px 18px 8px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  header h1 { font-weight: 500; font-size: 1.55rem; margin: 0; letter-spacing: -0.02em; }
+  .langbar { display: flex; justify-content: flex-start; margin-bottom: 14px; }
+  button.lang { letter-spacing: 0.04em; }
+  main { max-width: 860px; margin: 0 auto; padding: 12px 18px 64px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  label { display: block; font-size: 0.78rem; color: var(--muted); margin: 10px 0 4px; }
+  input, select {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--ink);
+  }
+  input:focus, select:focus { outline: 1px solid #cfcfc8; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat { background: #f3f3f0; border-radius: 12px; padding: 12px; }
+  .stat b { display: block; font-size: 1.3rem; font-weight: 560; }
+  .stat span { color: var(--muted); font-size: 0.78rem; }
+  .work { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .row-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  button {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    cursor: pointer;
+  }
+  button.solid { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.danger { color: var(--muted); }
+  .note { font-size: 0.88rem; color: var(--muted); }
+  pre.contract {
+    white-space: pre-wrap;
+    font-family: inherit;
+    background: #f3f3f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 0;
+  }
+  @media (max-width: 700px) {
+    .grid, .totals { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="langbar"><button class="lang" id="langBtn" type="button">Italiano</button></div>
+  <h1 id="title">Fee book</h1>
+  <p>Laurence Who</p>
+</header>
+<main>
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label data-i18n="name">Full name</label>
+        <input id="name" data-ph="namePh" placeholder="Client name">
+      </div>
+      <div>
+        <label data-i18n="request">Request date</label>
+        <input id="request" type="date">
+      </div>
+    </div>
+    <div class="totals" style="margin-top:14px">
+      <div class="stat"><span data-i18n="pkg">Total package</span><b id="pkg">—</b></div>
+      <div class="stat"><span data-i18n="disc">Discount if criteria met</span><b id="disc">—</b></div>
+      <div class="stat"><span data-i18n="low">Lowest charge</span><b id="low">—</b></div>
+    </div>
+    <p class="note" data-i18n="hint">Discount appears only when the package is at least €100, there are at least two services, and half the gap between total charges and rounded fees is not zero. It is that half, rounded up to €5. Lowest charge is package minus discount, rounded down to €5.</p>
+    <div id="works"></div>
+    <div class="row-actions">
+      <button class="solid" id="addWork" type="button" data-i18n="add">Add a service</button>
+      <button id="copyContract" type="button" data-i18n="copy">Copy agreement</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2 id="agreeTitle" style="font-weight:500;margin:0 0 8px">Agreement</h2>
+    <pre class="contract" id="contract"></pre>
+  </div>
+</main>
+<datalist id="stations">
+  <option>Studio</option><option>Udine</option><option>Buttrio</option><option>Manzano</option>
+  <option>San Giovanni al Natisone</option><option>Cormons</option><option>Gorizia Centrale</option>
+  <option>Sagrado</option><option>Ronchi dei Legionari Nord</option><option>Monfalcone</option>
+  <option>Palmanova</option><option>Cervignano-Aquileia-Grado</option><option>Sistiana-Visogliano</option>
+  <option>Bivio d'Aurisina</option><option>Trieste Centrale</option>
+</datalist>
+<script>
+const LEVELS = {
+  easy: 0.5, simple: 0.5, beginner: 0.8, basic: 0.8, normal: 1,
+  intermediate: 1.15, medium: 1.15, moderate: 1.15, difficult: 1.3,
+  challenging: 1.3, hard: 1.5, "very hard": 1.75, "very difficult": 1.75,
+  "extremely hard": 2, "extremely difficult": 2, expert: 2, virtuoso: 2,
+  virtuosistic: 2, virtuosic: 2
+};
+const STATIONS = [
+  ["Udine", 0], ["Buttrio", 3], ["Manzano", 5], ["San Giovanni al Natisone", 6.5],
+  ["Cormons", 7.8], ["Gorizia Centrale", 9.5], ["Sagrado", 11.1],
+  ["Ronchi dei Legionari Nord", 13.5], ["Monfalcone", 13.5], ["Palmanova", 6.5],
+  ["Cervignano-Aquileia-Grado", 7.8], ["Sistiana-Visogliano", 16],
+  ["Bivio d'Aurisina", 16], ["Trieste Centrale", 20.6]
+];
+const TYPES = ["Rehearsal", "Exam", "Concert", "Lesson", "Private lesson", "Piano lesson", "Graduation", "Accompaniment", "Chamber music lesson"];
+const COPY = {
+  en: {
+    btn: "Italiano", title: "Fee book", name: "Full name", namePh: "Client name", request: "Request date",
+    pkg: "Total package", disc: "Discount if criteria met", low: "Lowest charge",
+    hint: "Discount appears only when the package is at least €100, there are at least two services, and half the gap between total charges and rounded fees is not zero. It is that half, rounded up to €5. Lowest charge is package minus discount, rounded down to €5.",
+    add: "Add a service", copy: "Copy agreement", agree: "Agreement", empty: "No services yet. Add one when you have a job.",
+    service: "Service", date: "Date", time: "Time", type: "Type", minutes: "Duration (min)", level: "Level",
+    place: "Location", placePh: "Studio or a station", local: "Local transport €", travel: "Travel time (min)", remove: "Remove",
+    line: (r, euro) => "Standard " + euro(r.standard) + " · charged " + (typeof r.charged === "number" ? euro(r.charged) : (r.charged || "—")) + " · bus " + euro(r.bus) + " · train " + euro(r.train) + " · travel " + euro(r.travel) + " · subtotal " + euro(r.subtotal) + " · rounded " + euro(r.rounded) + " · <b>total " + euro(r.total) + "</b>" + (r.days != null ? " · " + r.days + " days from request" : ""),
+    check: "Please check that you have completed all the calculations.",
+    types: { Rehearsal: "Rehearsal", Exam: "Exam", Concert: "Concert", Lesson: "Lesson", "Private lesson": "Private lesson", "Piano lesson": "Piano lesson", Graduation: "Graduation", Accompaniment: "Accompaniment", "Chamber music lesson": "Chamber music lesson" }
+  },
+  it: {
+    btn: "English", title: "Tariffario", name: "Nome e cognome", namePh: "Nome del cliente", request: "Data della richiesta",
+    pkg: "Totale pacchetto", disc: "Sconto se i criteri sono soddisfatti", low: "Importo minimo",
+    hint: "Lo sconto compare solo se il pacchetto è di almeno €100, ci sono almeno due servizi, e metà della differenza tra i totali e le quote arrotondate non è zero. Quella metà si arrotonda per eccesso a €5. L’importo minimo è il pacchetto meno lo sconto, arrotondato per difetto a €5.",
+    add: "Aggiungi un servizio", copy: "Copia l’accordo", agree: "Accordo", empty: "Nessun servizio. Aggiungine uno quando hai un lavoro.",
+    service: "Servizio", date: "Data", time: "Ora", type: "Tipo", minutes: "Durata (min)", level: "Livello",
+    place: "Luogo", placePh: "Studio o una stazione", local: "Trasporto locale €", travel: "Tempo di viaggio (min)", remove: "Rimuovi",
+    line: (r, euro) => "Standard " + euro(r.standard) + " · applicato " + (typeof r.charged === "number" ? euro(r.charged) : (r.charged || "—")) + " · bus " + euro(r.bus) + " · treno " + euro(r.train) + " · viaggio " + euro(r.travel) + " · subtotale " + euro(r.subtotal) + " · arrotondato " + euro(r.rounded) + " · <b>totale " + euro(r.total) + "</b>" + (r.days != null ? " · " + r.days + " giorni dalla richiesta" : ""),
+    check: "Controlla di aver completato tutti i calcoli.",
+    types: { Rehearsal: "Prova", Exam: "Esame", Concert: "Concerto", Lesson: "Lezione", "Private lesson": "Lezione privata", "Piano lesson": "Lezione di pianoforte", Graduation: "Diploma", Accompaniment: "Accompagnamento", "Chamber music lesson": "Lezione di musica da camera" }
+  }
+};
+let lang = "en";
+function t(key) { return COPY[lang][key]; }
+const euro = n => (n === "" || n == null || Number.isNaN(n)) ? "—" : "€" + Number(n).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function daysBetween(request, date) {
+  if (!request || !date) return null;
+  const a = new Date(request + "T00:00:00");
+  const b = new Date(date + "T00:00:00");
+  return Math.round((b - a) / 86400000);
+}
+function shortNotice(type, d) {
+  const t = type.toLowerCase().trim();
+  if (t === "private lesson" || t === "piano lesson") return 0;
+  if (d == null || d < 0 || d >= 7) return 0;
+  if (d >= 5) return 5;
+  if (d >= 3) return 10;
+  if (d === 2) return 15;
+  if (d === 1) return 25;
+  return 30;
+}
+function baseFee(type, dur) {
+  const t = type.toLowerCase().trim();
+  if (t === "private lesson" || t === "piano lesson") return dur / 60 * 35;
+  if (t === "exam") return 30 + Math.round((dur - 10) / 5) * 5;
+  if (t === "concert") return 200 + (dur > 30 ? (dur - 30) / 15 * 50 : 0);
+  if (t === "graduation") return 100 + (dur > 30 ? (dur - 30) / 15 * 25 : 0);
+  return dur / 60 * 30;
+}
+function trainFare(location) {
+  const loc = (location || "").trim();
+  if (!loc || loc.toLowerCase() === "udine") return "";
+  const hit = STATIONS.find(s => s[0].toLowerCase().includes(loc.toLowerCase()) || loc.toLowerCase().includes(s[0].toLowerCase()));
+  return hit ? hit[1] : "";
+}
+function calcItem(item, request) {
+  const type = (item.type || "").trim();
+  const dur = Number(item.duration);
+  if (!type || !dur) return { standard: "", charged: "", bus: "", train: "", travel: "", subtotal: "", rounded: "", total: "" };
+  const d = daysBetween(request, item.date);
+  const standard = Math.max(20, baseFee(type, dur) + shortNotice(type, d));
+  const mult = LEVELS[(item.level || "").toLowerCase().trim()];
+  const charged = mult == null ? "Redefine" : standard * mult;
+  const loc = (item.location || "").trim();
+  const bus = (!loc || ["studio", "type", "forfeit"].includes(loc.toLowerCase())) ? "" : 3.1;
+  const train = trainFare(loc);
+  const local = item.local === "" || item.local == null ? "" : Number(item.local);
+  const travel = (bus === "" && train === "" && local === "") ? "" : (Number(bus) || 0) + (Number(train) || 0) + (Number(local) || 0);
+  const subtotal = (typeof charged === "number" || typeof travel === "number") ? (Number(charged) || 0) + (Number(travel) || 0) : "";
+  const rounded = subtotal === "" ? "" : Math.ceil(subtotal / 5) * 5;
+  let timeExtra = 0;
+  const tt = String(item.travelTime || "").trim();
+  if (tt && tt.toLowerCase() !== "forfeit") {
+    const mins = Number(tt);
+    if (mins >= 30) timeExtra = mins / 30 * 7.5;
+  }
+  const total = subtotal === "" ? "" : Math.ceil((subtotal + timeExtra) / 5) * 5;
+  return { standard, charged, bus, train, travel, subtotal, rounded, total, days: d };
+}
+function numWord(n) {
+  const en = ["zero","one","two","three","four","five","six","seven","eight","nine","ten"];
+  const it = ["zero","una","due","tre","quattro","cinque","sei","sette","otto","nove","dieci"];
+  const list = lang === "it" ? it : en;
+  return list[n] || String(n);
+}
+function agreement(name, items, pkg, disc, low) {
+  if (!name || pkg === "") return t("check");
+  const types = items.map(i => (i.type || "").toLowerCase().trim()).filter(Boolean);
+  const count = k => types.filter(x => x === k).length;
+  const lessons = count("lesson"), exams = count("exam"), concerts = count("concert");
+  const rehearsals = count("rehearsal"), accomp = count("accompaniment"), chamber = count("chamber music lesson");
+  const bit = (n, one, many) => n ? numWord(n) + " " + (n === 1 ? one : many) : "";
+  const words = lang === "it"
+    ? { lesson: ["lezione", "lezioni"], rehearsal: ["prova", "prove"], exam: ["esame", "esami"], concert: ["concerto", "concerti"] }
+    : { lesson: ["lesson", "lessons"], rehearsal: ["rehearsal", "rehearsals"], exam: ["exam", "exams"], concert: ["concert", "concerts"] };
+  const lessonText = bit(lessons, words.lesson[0], words.lesson[1]);
+  const rehearsalText = bit(rehearsals, words.rehearsal[0], words.rehearsal[1]);
+  const examText = bit(exams, words.exam[0], words.exam[1]);
+  const concertText = bit(concerts, words.concert[0], words.concert[1]);
+  const chamberText = chamber ? numWord(chamber) + (lang === "it" ? " lezion" + (chamber === 1 ? "e" : "i") + " di musica da camera" : " chamber music lesson" + (chamber === 1 ? "" : "s")) : "";
+  const accompCount = lessons + rehearsals + exams + concerts;
+  let accompText = "";
+  if (accompCount + accomp) {
+    accompText = accompCount === 0
+      ? (lang === "it" ? "Accompagnamento pianistico" : "Piano accompaniment")
+      : (lang === "it" ? "Accompagnamento pianistico per " : "Piano accompaniment for ") + [lessonText, rehearsalText, examText, concertText].filter(Boolean).join(", ");
+  }
+  const services = !chamber ? accompText : (!accompText ? chamberText : accompText + ", " + chamberText);
+  const money = n => "€" + Number(n).toFixed(2);
+  let pay = "☐ " + money(pkg) + (lang === "it" ? " totale pacchetto" : " total package");
+  if (disc !== "" && low !== "" && low !== pkg) {
+    pay += lang === "it"
+      ? "\n☐ " + money(low) + " pagato in anticipo, con un risparmio di " + money(disc) + ". Questo pagamento anticipato costituisce il saldo dell’intero pacchetto concordato."
+      : "\n☐ " + money(low) + " paid in advance, saving " + money(disc) + ". This advance payment constitutes the full payment for the agreed package.";
+  }
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2,"0") + "/" + String(today.getMonth()+1).padStart(2,"0") + "/" + today.getFullYear();
+  if (lang === "it") {
+    return "ACCORDO DI SERVIZIO\n\nQuesto accordo conferma i servizi concordati tra Lorenzo Ritacco e " + name + ".\n\nSERVIZI\n" + services + "\n\nPAGAMENTO\n" + pay + "\n\nANNULLAMENTO / IMPEGNO PERSO\nPer ogni impegno perso, " + name + " si impegna a pagare la tariffa base di quel singolo impegno.\n\nFirmando, entrambe le parti confermano di aver letto, compreso e accettato i termini sopra.\n\nDATA: " + dd + "\nLUOGO: Udine\n\n" + name + "                                      Lorenzo Ritacco";
+  }
+  return "SERVICE AGREEMENT\n\nThis agreement confirms the service(s) agreed between Lorenzo Ritacco and " + name + ".\n\nSERVICES\n" + services + "\n\nPAYMENT\n" + pay + "\n\nCANCELLATION / LOST COMMITMENT\nFor any lost commitment, " + name + " agrees to pay the basic fee of that individual commitment.\n\nBy signing below, both parties confirm that they have read, understood, and agreed to the terms above.\n\nDATE: " + dd + "\nPLACE: Udine\n\n" + name + "                                      Lorenzo Ritacco";
+}
+
+let items = [];
+function blankItem() {
+  return { date: "", time: "", type: "Rehearsal", duration: "", level: "Normal", location: "", local: "", travelTime: "" };
+}
+function readItemsFromDom() {
+  document.querySelectorAll("#works .work").forEach((block, i) => {
+    if (!items[i]) items[i] = blankItem();
+    block.querySelectorAll("[data-k]").forEach(el => { items[i][el.dataset.k] = el.value; });
+  });
+}
+function updateFigures() {
+  readItemsFromDom();
+  const request = document.getElementById("request").value;
+  const name = document.getElementById("name").value.trim();
+  const calced = items.map(item => calcItem(item, request));
+  document.querySelectorAll("#works .work").forEach((block, i) => {
+    const row = calced[i] || {};
+    const note = block.querySelector(".figures");
+    if (!note) return;
+    note.innerHTML = t("line")(row, euro);
+  });
+  const totals = calced.map(r => r.total).filter(n => typeof n === "number");
+  const rounded = calced.map(r => r.rounded).filter(n => typeof n === "number");
+  const pkg = totals.reduce((a, b) => a + b, 0);
+  const pkgShow = totals.length ? pkg : "";
+  const named = items.filter(it => it.type && it.type.toLowerCase() !== "select" && it.duration).length;
+  let disc = "";
+  if (pkgShow !== "" && !(pkg < 100 || named < 2 || (pkg - rounded.reduce((a, b) => a + b, 0)) / 2 === 0)) {
+    disc = Math.ceil(((pkg - rounded.reduce((a, b) => a + b, 0)) / 2) / 5) * 5;
+  }
+  let low = "";
+  if (!(pkgShow === "" || pkg - (disc || 0) === pkg)) low = Math.floor((pkg - disc) / 5) * 5;
+  document.getElementById("pkg").textContent = euro(pkgShow);
+  document.getElementById("disc").textContent = euro(disc);
+  document.getElementById("low").textContent = euro(low);
+  document.getElementById("contract").textContent = agreement(name, items, pkgShow, disc, low);
+}
+function renderWorks() {
+  const host = document.getElementById("works");
+  host.innerHTML = "";
+  if (!items.length) host.innerHTML = "<p class='note'>" + t("empty") + "</p>";
+  items.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "work";
+    div.innerHTML = `
+      <strong>${t("service")} ${i + 1}</strong>
+      <div class="grid">
+        <div><label>${t("date")}</label><input data-k="date" type="date" value="${item.date || ""}"></div>
+        <div><label>${t("time")}</label><input data-k="time" type="time" value="${item.time || ""}"></div>
+        <div><label>${t("type")}</label><select data-k="type">${TYPES.map(tp => `<option value="${tp}" ${tp === item.type ? "selected" : ""}>${t("types")[tp]}</option>`).join("")}</select></div>
+        <div><label>${t("minutes")}</label><input data-k="duration" inputmode="numeric" value="${item.duration || ""}"></div>
+        <div><label>${t("level")}</label><select data-k="level">${Object.keys(LEVELS).map(lv => `<option value="${lv}" ${lv === (item.level || "").toLowerCase() ? "selected" : ""}>${lv}</option>`).join("")}</select></div>
+        <div><label>${t("place")}</label><input data-k="location" list="stations" value="${item.location || ""}" placeholder="${t("placePh")}"></div>
+        <div><label>${t("local")}</label><input data-k="local" inputmode="decimal" value="${item.local || ""}"></div>
+        <div><label>${t("travel")}</label><input data-k="travelTime" inputmode="numeric" value="${item.travelTime || ""}"></div>
+      </div>
+      <p class="note figures"></p>
+      <button class="danger" type="button">${t("remove")}</button>`;
+    div.querySelector("button").onclick = () => { readItemsFromDom(); items.splice(i, 1); renderWorks(); };
+    host.appendChild(div);
+  });
+  updateFigures();
+}
+document.getElementById("works").addEventListener("input", updateFigures);
+document.getElementById("works").addEventListener("change", updateFigures);
+document.getElementById("addWork").onclick = () => { readItemsFromDom(); items.push(blankItem()); renderWorks(); };
+document.getElementById("name").oninput = updateFigures;
+document.getElementById("request").oninput = updateFigures;
+document.getElementById("copyContract").onclick = () => {
+  const text = document.getElementById("contract").textContent;
+  if (text) navigator.clipboard.writeText(text);
+};
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.getElementById("langBtn").textContent = t("btn");
+  document.getElementById("title").textContent = t("title");
+  document.getElementById("agreeTitle").textContent = t("agree");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-ph]").forEach(el => { el.placeholder = t(el.dataset.ph); });
+  renderWorks();
+}
+document.getElementById("langBtn").onclick = () => { lang = lang === "en" ? "it" : "en"; applyLang(); };
+renderWorks();
+</script>
+</body>
+</html>
