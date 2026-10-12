@@ -3,7 +3,7 @@ android {
   namespace 'com.laurencewho.career'
   compileSdk 34
   lint { abortOnError false; checkReleaseBuilds false; textReport true; textOutput file("build/lint.txt") }
-  defaultConfig { applicationId 'com.laurencewho.career'; minSdk 26; targetSdk 34; versionCode 10; versionName '1.0' }
+  defaultConfig { applicationId 'com.laurencewho.career'; minSdk 26; targetSdk 34; versionCode 11; versionName '1.1' }
   aaptOptions { noCompress 'm4a' }
   signingConfigs { release { storeFile file('/workspace/apps/keys/quiet.jks'); storePassword System.getenv('QKS_PASS'); keyAlias 'quiet'; keyPassword System.getenv('QKS_PASS') } }
   buildTypes { release { minifyEnabled false; signingConfig signingConfigs.release } }

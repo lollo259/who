@@ -414,8 +414,17 @@ document.getElementById("svcReset").onclick=()=>{SERVICES=EXAMPLES.slice().map(x
 function loadSetUi(){ setStd.value=SET.std||""; setHome.value=SET.home||""; setBus.value=SET.bus||""; setName.value=SET.name||""; document.getElementById("who").textContent=SET.name||""; }
 document.getElementById("setDone").onclick=()=>{SET.std=Number(setStd.value.replace(",","."))||0;SET.home=setHome.value.trim();SET.bus=Number(setBus.value.replace(",","."))||0;SET.name=setName.value.trim();saveSet();loadSetUi();document.getElementById("settings").style.display="none";firstRun.style.display="none";gearUi();updateFigures();busUi();scrollTo(0,0);};
 loadSetUi(); svcUi(); busUi();
-if (!SET.std) { document.getElementById("settings").style.display=""; firstRun.style.display=""; }
+if (!SET.std) firstRun.style.display="";
+// view memory: first time opens on settings; afterwards the last view (settings or calculator) and its scroll position
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const VIEW0 = localStorage.getItem("fee_view");
+document.getElementById("settings").style.display = (VIEW0 === "calc" && SET.std) ? "none" : "";
+let viewReady = false;
+const curView = () => document.getElementById("settings").style.display === "none" ? "calc" : "settings";
+const gearUi0 = gearUi; gearUi = function(){ gearUi0(); if (viewReady) localStorage.setItem("fee_view", curView()); };
 gearUi();
+addEventListener("scroll", () => { if (viewReady) localStorage.setItem("fee_scroll_" + curView(), String(Math.round(scrollY))); }, {passive:true});
+scrollTo(0, Number(localStorage.getItem("fee_scroll_" + curView())) || 0); localStorage.setItem("fee_view", curView()); viewReady = true;
 </script>
 </body>
 </html>
