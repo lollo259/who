@@ -1,6 +1,41 @@
 {
- "updated": "2026-10-11",
+ "updated": "2026-10-12",
  "items": [
+  {
+   "title": "Villa Medici — Concours des pensionnaires 2027-2028",
+   "org": "Académie de France à Rome – Villa Médicis",
+   "type": "residency",
+   "disciplines": [
+    "multidisciplinary",
+    "composition"
+   ],
+   "country": "Italy (Rome)",
+   "region": "italy",
+   "deadline": "2026-10-16",
+   "fee": "free",
+   "link": "https://villamedici.it/programme_residence/concours-des-pensionnaires/",
+   "note": "12-month paid residency from Sept 2027, all creative disciplines incl. music composition. Closes 16 Oct at 12:00 (Paris time); application and project must be in French.",
+   "id": "oc31",
+   "roles": [
+    "architect",
+    "artist",
+    "composer",
+    "dancer",
+    "designer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "musician",
+    "performer",
+    "photographer",
+    "poet",
+    "scholar",
+    "sound artist",
+    "theatre maker",
+    "visual artist",
+    "writer"
+   ]
+  },
   {
    "title": "Dall'improvvisazione alla scrittura — residency for performers under 36",
    "org": "ALDES / GiovaniSì",
@@ -147,6 +182,53 @@
    ]
   },
   {
+   "title": "Corpo a Corpi — interdisciplinary performance residency (under 36)",
+   "org": "KINKALERI / Giovanisì (Regione Toscana)",
+   "type": "residency",
+   "disciplines": [
+    "multidisciplinary"
+   ],
+   "country": "Italy (Prato, Florence, Pistoia)",
+   "region": "italy",
+   "deadline": "2026-10-31",
+   "fee": "free",
+   "link": "https://giovanisi.it/bando/residenze-arti-sceniche-bando-per-giovani-artisti-under-36/",
+   "note": "12 places, closes 31 Oct at 12:00. Age 18–35, resident or domiciled in Tuscany, not employed; AFAM diploma or equivalent experience.",
+   "id": "oc32",
+   "roles": [
+    "actor",
+    "artist",
+    "circus artist",
+    "dancer",
+    "multidisciplinary artist",
+    "performance artist",
+    "performer",
+    "theatre maker"
+   ]
+  },
+  {
+   "title": "Concorso internazionale di composizione “Dante Moro” (10th)",
+   "org": "Dolomiti Symphonia",
+   "type": "competition",
+   "disciplines": [
+    "composition",
+    "piano"
+   ],
+   "country": "Italy (Falcade, BL)",
+   "region": "italy",
+   "deadline": "2026-11-01",
+   "fee": "€40",
+   "link": "https://www.dolomitisymphonia.it/concorso-dante-moro/",
+   "note": "No age limit. Sec. A: piano solo/duo/trio as live soundtrack to a 5'21\" video; Sec. B: piano + string orchestra (max 8'). Premiere 29 Dec 2026, €1,500 prize pool.",
+   "id": "oc33",
+   "roles": [
+    "composer",
+    "film composer",
+    "musician",
+    "pianist"
+   ]
+  },
+  {
    "title": "Valencia Iturbi International Piano Competition 2027",
    "org": "Diputación de Valencia",
    "type": "competition",
@@ -254,6 +336,33 @@
     "musician",
     "performer",
     "pianist"
+   ]
+  },
+  {
+   "title": "Casa de Velázquez — Artists in residence 2027-2028",
+   "org": "Académie de France à Madrid",
+   "type": "residency",
+   "disciplines": [
+    "composition",
+    "multidisciplinary"
+   ],
+   "country": "Spain (Madrid)",
+   "region": "world",
+   "deadline": "2026-11-27",
+   "fee": "free",
+   "link": "https://www.casadevelazquez.org/es/que-pasa-en-la-casa/detalle/convocatoria-artistas-en-residencia-2027-2028",
+   "note": "12 places, 12-month residency grant. Portal opens 19 Oct, closes 27 Nov at 13:00 Madrid. Fields incl. music composition, choreography, film, visual arts; file and interview in French.",
+   "id": "oc34",
+   "roles": [
+    "architect",
+    "artist",
+    "composer",
+    "dancer",
+    "film composer",
+    "filmmaker",
+    "multidisciplinary artist",
+    "photographer",
+    "visual artist"
    ]
   },
   {
@@ -365,6 +474,27 @@
    ]
   },
   {
+   "title": "Spring Writers 2027 — open-genre residency",
+   "org": "Banff Centre for Arts and Creativity",
+   "type": "residency",
+   "disciplines": [
+    "multidisciplinary"
+   ],
+   "country": "Canada (Banff)",
+   "region": "world",
+   "deadline": "2026-12-09",
+   "fee": "CA$65 + participant cost",
+   "link": "https://www.banffcentre.ca/programs/literary-arts/spring-writers-2027",
+   "note": "12 days, 5–16 Apr 2027, with faculty mentors. International applicants welcome; projects in English; participant cost about CA$1,873 after scholarship.",
+   "id": "oc35",
+   "roles": [
+    "lyricist",
+    "poet",
+    "songwriter",
+    "writer"
+   ]
+  },
+  {
    "title": "ACHROME ensemble International Call for Scores (10th ed.)",
    "org": "ACHROME ensemble",
    "type": "call for scores",
@@ -413,6 +543,28 @@
    ]
   },
   {
+   "title": "TorinoFilmLab SeriesLab 2027",
+   "org": "TorinoFilmLab – Museo Nazionale del Cinema",
+   "type": "lab",
+   "disciplines": [
+    "producer",
+    "multidisciplinary"
+   ],
+   "country": "Italy (Turin) + Tbilisi, Madrid",
+   "region": "italy",
+   "deadline": "2026-12-16",
+   "fee": "€3,500 per team if selected",
+   "link": "https://www.torinofilmlab.it/labs/serieslab/serieslab-2027",
+   "note": "Fiction series development for writer + producer teams. Three residential workshops Jun–Nov 2027; half-fee scholarships available. Closes 16 Dec at 16:00 CET.",
+   "id": "oc36",
+   "roles": [
+    "creative producer",
+    "filmmaker",
+    "producer",
+    "writer"
+   ]
+  },
+  {
    "title": "Yaddo — Winter application cycle",
    "org": "Yaddo",
    "type": "residency",
@@ -439,6 +591,36 @@
     "performer",
     "photographer",
     "sound artist",
+    "visual artist",
+    "writer"
+   ]
+  },
+  {
+   "title": "Anderson Center Artist Residency 2027",
+   "org": "Anderson Center at Tower View",
+   "type": "residency",
+   "disciplines": [
+    "multidisciplinary",
+    "composition",
+    "piano"
+   ],
+   "country": "USA (Red Wing, Minnesota)",
+   "region": "world",
+   "deadline": "2027-01-12",
+   "fee": "$30",
+   "link": "https://www.andersoncenter.org/residency-program/",
+   "note": "2–4 week residencies May–Oct 2027, free room and meals, two grand pianos on site. Open worldwide to all disciplines.",
+   "id": "oc37",
+   "roles": [
+    "artist",
+    "composer",
+    "dancer",
+    "multidisciplinary artist",
+    "musician",
+    "performance artist",
+    "pianist",
+    "poet",
+    "scholar",
     "visual artist",
     "writer"
    ]
