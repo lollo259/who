@@ -11,12 +11,13 @@ public class Main extends Activity{
   hv=Typeface.create("sans-serif",Typeface.NORMAL);dp=getResources().getDisplayMetrics().density;sp=getSharedPreferences("c",0);
   getWindow().getDecorView().setBackgroundColor(bg);
   LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setBackgroundColor(bg);
-  LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER);nav.setPadding(0,px(18),0,px(10));
+  LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER);nav.setPadding(0,px(8),0,px(12));nav.setOnApplyWindowInsetsListener((v,in)->{v.setPadding(0,px(8),0,px(12)+in.getSystemWindowInsetBottom());return in;});
   String[] n={"fee book","open calls","outreach"};
   for(int i=0;i<3;i++){final int k=i;TextView t=tv(n[i],12,fg);t.setLetterSpacing(.2f);t.setPadding(px(12),px(8),px(12),px(8));t.setOnClickListener(v->show(k));tabs[i]=t;nav.addView(t);}
-  root.addView(nav);body=new FrameLayout(this);root.addView(body,new LinearLayout.LayoutParams(-1,0,1));setContentView(root);immersive();
+  body=new FrameLayout(this);root.addView(body,new LinearLayout.LayoutParams(-1,0,1));root.addView(nav);setContentView(root);immersive();
   calls=cached("opencalls.json",true);outreach=cached("outreach.json",false);
-  show(b!=null?b.getInt("p",sp.getInt("p",0)):sp.getInt("p",0));refresh();}
+  show(b!=null?b.getInt("p",sp.getInt("p",0)):sp.getInt("p",0));}
+ @Override protected void onResume(){super.onResume();refresh();}
  int px(float v){return (int)(v*dp+.5f);}
  TextView tv(String s,float size,int c){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(c);t.setTypeface(hv);t.setLineSpacing(0,1.25f);return t;}
  void immersive(){getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE);}
@@ -41,8 +42,22 @@ public class Main extends Activity{
   HorizontalScrollView h=new HorizontalScrollView(this);h.setHorizontalScrollBarEnabled(false);h.addView(r);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.gravity=Gravity.CENTER_HORIZONTAL;h.setLayoutParams(lp);return h;}
  View line(){View v=new View(this);v.setBackgroundColor(fg);v.setAlpha(.12f);v.setLayoutParams(new LinearLayout.LayoutParams(-1,1));return v;}
  void open(String u){try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(u)));}catch(Exception e){}}
+ float y0=-1;
+ void pull(ScrollView s){s.setOnTouchListener((v,e)->{if(e.getAction()==MotionEvent.ACTION_DOWN)y0=s.getScrollY()==0?e.getY():-1;
+  else if(e.getAction()==MotionEvent.ACTION_UP){if(y0>=0&&e.getY()-y0>px(110)){Toast.makeText(this,"refreshing",Toast.LENGTH_SHORT).show();refresh();}y0=-1;}return false;});}
+ static final String[][] SYN={
+  {"pianist","pianista","piano","pianoforte","music","musica","musician","musicista","composer","compositore","composition","composizione","sound","suono"},
+  {"musician","musicista","music","musica","sound","performer","composition"},
+  {"artist","artista","art","arte","visual art","arti visive","interdisciplinary","multidisciplinary","multidisciplinare","interdisciplinare"},
+  {"composer","compositore","composition","composizione","music","musica","score","film music","colonna sonora","film composer"},
+  {"producer","produttore","music production","produzione","sound","creative producer","multidisciplinary"},
+  {"filmmaker","regista","film","cinema","video","moving image","documentary","documentario"},
+  {"designer","design","graphic","grafica","illustrat"},
+  {"writer","scrittore","writing","scrittura","poet","poesia","literature","letteratura"},
+  {"performer","performance","live","theatre","teatro","dance","danza"}};
+ static Set<String> expand(String j){Set<String> o=new LinkedHashSet<>();o.add(j);for(String[] g:SYN)for(String w:g)if(w.equals(j)||(j.length()>3&&w.startsWith(j))){o.addAll(Arrays.asList(g));break;}return o;}
  // ---------- open calls
- View callsPage(){LinearLayout l=new LinearLayout(this);ScrollView s=scroller(l);
+ View callsPage(){LinearLayout l=new LinearLayout(this);ScrollView s=scroller(l);pull(s);
   EditText jobs=new EditText(this);jobs.setText(sp.getString("jobs",""));jobs.setHint("my jobs — pianist, composer, creative producer");jobs.setHintTextColor(dim);jobs.setTextColor(fg);jobs.setTextSize(14);jobs.setTypeface(hv);jobs.setGravity(Gravity.CENTER);jobs.setSingleLine(true);jobs.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dim));
   LinearLayout list=new LinearLayout(this);list.setOrientation(LinearLayout.VERTICAL);TextView sub=center("",11,dim);
   Runnable draw=()->drawCalls(list,sub,jobs.getText().toString());
@@ -56,7 +71,7 @@ public class Main extends Activity{
   for(int i=0;i<calls.length();i++){JSONObject o=calls.optJSONObject(i);if(o==null)continue;String dl=o.optString("deadline","");
    if(openOnly&&dl.length()==10&&dl.compareTo(today)<0)continue;
    if(!region.equals("all")&&!region.equals(o.optString("region")))continue;
-   if(!jobs.isEmpty()){String hay=(o.optJSONArray("roles")+" "+o.optJSONArray("disciplines")+" "+o.optString("title")).toLowerCase();boolean hit=false;for(String j:jobs)if(hay.contains(j))hit=true;if(!hit)continue;}
+   if(!jobs.isEmpty()){String hay=(o.optJSONArray("roles")+" "+o.optJSONArray("disciplines")+" "+o.optJSONArray("tags")+" "+o.optString("title")+" "+o.optString("type")+" "+o.optString("note")+" "+o.optString("description")).toLowerCase();boolean hit=false;for(String j:jobs)for(String w:expand(j))if(hay.contains(w))hit=true;if(!hit)continue;}
    L.add(o);}
   L.sort((a,b)->a.optString("deadline","9").compareTo(b.optString("deadline","9")));
   sub.setText(L.size()+(L.size()==1?" call":" calls"));
