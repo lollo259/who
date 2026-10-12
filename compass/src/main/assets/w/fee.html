@@ -79,11 +79,12 @@
   @media (max-width: 700px) {
     .grid, .totals { grid-template-columns: 1fr; }
   }
+  body.setmode main > :not(#settings) { display: none !important; }
 </style>
 </head>
 <body>
 <header>
-  <div class="langbar" style="justify-content:space-between"><button class="lang" id="langBtn" type="button">Italiano</button><button id="gearBtn" type="button" aria-label="Settings">⚙ Settings</button></div>
+  <div class="langbar" style="justify-content:space-between"><button class="lang" id="langBtn" type="button">Italiano</button><button id="gearBtn" type="button" aria-label="settings">⚙ settings</button></div>
   <h1 id="title">Fee book</h1>
   <p id="who"></p>
 </header>
@@ -97,11 +98,15 @@
     <label>Home city</label><input id="setHome" placeholder="e.g. your city">
     <label>Daily bus fee (€ per day)</label><input id="setBus" inputmode="decimal" placeholder="e.g. 3.10">
     <p class="note">Added once for each day of work when Bus is on, home city included.</p>
-    <h2 style="font-weight:500;margin:18px 0 4px;font-size:1.1rem">Services</h2>
+    <button id="advBtn" type="button" style="width:100%;margin-top:18px;text-align:left;font-size:0.88rem;color:var(--muted)">advanced settings ▸</button>
+    <div id="adv" style="display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:4px;font-size:0.92rem">
+    <p class="note">you can leave these as they are · changes here affect all your fees</p>
+    <h2 style="font-weight:500;margin:14px 0 4px;font-size:1rem">services</h2>
     <p class="note">Hourly: rate × standard fee per hour. Block: base × standard fee for the included minutes, then + extra × standard fee per step.</p>
     <div id="svcList"></div>
     <div class="row-actions"><button id="svcAdd" type="button">Add a service type</button><button id="svcReset" type="button" class="danger">Load examples</button></div>
-    <div class="row-actions"><button class="solid" id="setDone" type="button">Done</button></div>
+    </div>
+    <div class="row-actions"><button class="solid" id="setDone" type="button" style="width:100%;padding:14px;font-size:1.05rem">start calculator</button></div>
   </div>
   <div class="card">
     <div class="grid">
@@ -373,7 +378,9 @@ renderWorks();
 
 function busUi(){ const b=document.getElementById("busBtn"); b.textContent=SET.busOn?"On":"Off"; b.className=SET.busOn?"solid":""; document.getElementById("busNote").textContent=SET.busOn?euro(SET.bus)+" per day, home city included":"Off · no daily bus fee"; }
 document.getElementById("busBtn").onclick=()=>{SET.busOn=!SET.busOn;saveSet();busUi();updateFigures();};
-document.getElementById("gearBtn").onclick=()=>{const s=document.getElementById("settings");s.style.display=s.style.display==="none"?"":"none";};
+function gearUi(){ const open=document.getElementById("settings").style.display!=="none"; document.body.classList.toggle("setmode",open); document.getElementById("gearBtn").textContent=open?"start calculator":"⚙ settings"; }
+document.getElementById("gearBtn").onclick=()=>{ const s=document.getElementById("settings"); if(s.style.display==="none"){ s.style.display=""; gearUi(); scrollTo(0,0);} else document.getElementById("setDone").click(); };
+document.getElementById("advBtn").onclick=()=>{ const a=document.getElementById("adv"),o=a.style.display==="none"; a.style.display=o?"":"none"; document.getElementById("advBtn").textContent="advanced settings "+(o?"▾":"▸"); };
 function svcUi(){ const h=document.getElementById("svcList"); h.innerHTML=""; SERVICES.forEach((sv,i)=>{ const d=document.createElement("div"); d.className="work";
   const f=(k,lab,v)=>`<div><label>${lab}</label><input data-s="${k}" inputmode="decimal" value="${v==null?"":+(+v).toFixed(4)}"></div>`;
   d.innerHTML=`<div class="grid"><div><label>Name</label><input data-s="name" value="${sv.name.replace(/"/g,"&quot;")}"></div><div><label>Type</label><select data-s="mode"><option value="hourly" ${sv.mode!=="block"?"selected":""}>hourly</option><option value="block" ${sv.mode==="block"?"selected":""}>block</option></select></div>`+
@@ -387,9 +394,10 @@ function svcSave(){ localStorage.setItem("fee_services",JSON.stringify(SERVICES)
 document.getElementById("svcAdd").onclick=()=>{SERVICES.push({name:"New service",mode:"hourly",rate:1,notice:true});svcSave();svcUi();};
 document.getElementById("svcReset").onclick=()=>{SERVICES=EXAMPLES.slice().map(x=>Object.assign({},x));svcSave();svcUi();};
 function loadSetUi(){ setStd.value=SET.std||""; setHome.value=SET.home||""; setBus.value=SET.bus||""; setName.value=SET.name||""; document.getElementById("who").textContent=SET.name||""; }
-document.getElementById("setDone").onclick=()=>{SET.std=Number(setStd.value.replace(",","."))||0;SET.home=setHome.value.trim();SET.bus=Number(setBus.value.replace(",","."))||0;SET.name=setName.value.trim();saveSet();loadSetUi();document.getElementById("settings").style.display="none";firstRun.style.display="none";updateFigures();busUi();};
+document.getElementById("setDone").onclick=()=>{SET.std=Number(setStd.value.replace(",","."))||0;SET.home=setHome.value.trim();SET.bus=Number(setBus.value.replace(",","."))||0;SET.name=setName.value.trim();saveSet();loadSetUi();document.getElementById("settings").style.display="none";firstRun.style.display="none";gearUi();updateFigures();busUi();scrollTo(0,0);};
 loadSetUi(); svcUi(); busUi();
 if (!SET.std) { document.getElementById("settings").style.display=""; firstRun.style.display=""; }
+gearUi();
 </script>
 </body>
 </html>
