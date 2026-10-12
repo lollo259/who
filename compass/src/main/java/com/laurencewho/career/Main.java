@@ -11,18 +11,20 @@ public class Main extends Activity{
   boolean night=(getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;
   fg=night?0xffffffff:0xff111111;bg=night?0xff000000:0xfff3f3f1;dim=night?0x80ffffff:0x80111111;
   hv=Typeface.create("sans-serif",Typeface.NORMAL);dp=getResources().getDisplayMetrics().density;sp=getSharedPreferences("c",0);
+  // fee calculator: off for new installs; upgrades that never set it keep the old default (on)
+  if(!sp.contains("showFee")){boolean fresh=sp.getAll().isEmpty();sp.edit().putBoolean("showFee",!fresh).putInt("p",sp.getInt("p",fresh?3:0)).apply();}
   getWindow().getDecorView().setBackgroundColor(bg);
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(bg);
   LinearLayout nav=new LinearLayout(this);dock=nav;nav.setGravity(Gravity.CENTER);nav.setPadding(px(8),px(4),px(8),px(4));nav.setElevation(px(6));
   android.graphics.drawable.GradientDrawable gd=new android.graphics.drawable.GradientDrawable();gd.setCornerRadius(px(28));gd.setColor(bg==0xff000000?0xf01c1c1c:0xf0ffffff);gd.setStroke(1,(fg&0x00ffffff)|0x22000000);nav.setBackground(gd);
   String[] n={"fee book","open calls","outreach","profile"};
-  for(int i=0;i<4;i++){final int k=i;TextView t=tv(n[i],12,fg);t.setLetterSpacing(.12f);t.setPadding(px(9),px(10),px(9),px(10));t.setOnClickListener(v->show(k));tabs[i]=t;if(i==0&&!sp.getBoolean("showFee",true))t.setVisibility(View.GONE);nav.addView(t);}
+  for(int i=0;i<4;i++){final int k=i;TextView t=tv(n[i],12,fg);t.setLetterSpacing(.12f);t.setPadding(px(9),px(10),px(9),px(10));t.setOnClickListener(v->show(k));tabs[i]=t;if(i==0&&!sp.getBoolean("showFee",false))t.setVisibility(View.GONE);nav.addView(t);}
   body=new FrameLayout(this);root.addView(body,new FrameLayout.LayoutParams(-1,-1));
   FrameLayout.LayoutParams dl=new FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);dl.bottomMargin=px(16);root.addView(nav,dl);
   root.setOnApplyWindowInsetsListener((v,in)->{dl.bottomMargin=px(16)+in.getSystemWindowInsetBottom();nav.setLayoutParams(dl);return in;});
   setContentView(root);immersive();
   seed=cached("opencalls.json",true);merge();
-  show(b!=null?b.getInt("p",sp.getInt("p",0)):sp.getInt("p",0));}
+  show(b!=null?b.getInt("p",sp.getInt("p",3)):sp.getInt("p",3));}
  @Override protected void onResume(){super.onResume();refresh();}
  int px(float v){return (int)(v*dp+.5f);}
  TextView tv(String s,float size,int c){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(c);t.setTypeface(hv);t.setLineSpacing(0,1.25f);return t;}
@@ -30,7 +32,7 @@ public class Main extends Activity{
  @Override public void onWindowFocusChanged(boolean f){super.onWindowFocusChanged(f);if(f)immersive();}
  @Override protected void onSaveInstanceState(Bundle o){super.onSaveInstanceState(o);o.putInt("p",cur);}
  @Override public void onBackPressed(){if(detailOf!=null){show(cur);return;}if(cur==0&&fee!=null&&fee.canGoBack())fee.goBack();else if(cur>0)show(cur-1);else super.onBackPressed();}
- void show(int i){if(i==0&&!sp.getBoolean("showFee",true))i=1;cur=i;detailOf=null;if(dock!=null)dock(true);sp.edit().putInt("p",i).apply();for(int j=0;j<4;j++)tabs[j].setAlpha(j==i?1f:.35f);body.removeAllViews();
+ void show(int i){if(i==0&&!sp.getBoolean("showFee",false))i=1;cur=i;detailOf=null;if(dock!=null)dock(true);sp.edit().putInt("p",i).apply();for(int j=0;j<4;j++)tabs[j].setAlpha(j==i?1f:.35f);body.removeAllViews();
   if(i==0)body.addView(feePage());else if(i==1)body.addView(callsPage());else if(i==2)body.addView(outreachPage());else body.addView(profilePage());}
  // ---------- data: network → cache → bundled asset (never empty)
  JSONArray cached(String n,boolean c){String s=null;try{InputStream in=getAssets().open("w/data/"+n);s=new String(readAll(in),"UTF-8");}catch(Exception e){}
@@ -193,6 +195,7 @@ public class Main extends Activity{
  LinearLayout btnRow(String a,boolean aOn,Runnable ra,String b,Runnable rb){LinearLayout r=new LinearLayout(this);r.setPadding(0,px(12),0,0);
   TextView x=chipBtn(a,aOn,ra);x.setGravity(Gravity.CENTER);x.setPadding(0,px(11),0,px(11));TextView y=chipBtn(b,false,rb);y.setGravity(Gravity.CENTER);y.setPadding(0,px(11),0,px(11));
   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.rightMargin=px(8);r.addView(x,lp);r.addView(y,new LinearLayout.LayoutParams(0,-2,1));return r;}
+ LinearLayout setRowV(View t,View right){LinearLayout r=new LinearLayout(this);r.setGravity(Gravity.CENTER_VERTICAL);r.setPadding(0,px(6),0,px(6));r.addView(t,new LinearLayout.LayoutParams(0,-2,1));r.addView(right);return r;}
  LinearLayout setRow(String t,View right){LinearLayout r=new LinearLayout(this);r.setGravity(Gravity.CENTER_VERTICAL);r.setPadding(0,px(6),0,px(6));r.addView(tv(t,14,fg),new LinearLayout.LayoutParams(0,-2,1));r.addView(right);return r;}
  View profilePage(){LinearLayout l=new LinearLayout(this);ScrollView s=scroller(l);l.setPadding(px(18),px(24),px(18),px(130));
   String cvTxt=sp.getString("cv","");String name=sp.getString("name","").trim();List<String> jobs=myJobs();boolean empty=cvTxt.trim().isEmpty()&&jobs.isEmpty();
@@ -226,8 +229,9 @@ public class Main extends Activity{
    if(!editCv){LinearLayout cc=pcard();cc.addView(label("YOUR CV"));cc.addView(tv(cvTxt.isEmpty()?"no cv yet":String.format(Locale.US,"%,d characters · stored on this device",cvTxt.length()),12,dim));
     cc.addView(btnRow("edit cv",false,()->{editCv=true;show(3);},"import file",this::pickFile));l.addView(cc);}}
   // settings
-  LinearLayout se=pcard();se.addView(label("SETTINGS"));boolean feeOn=sp.getBoolean("showFee",true),on=sp.getBoolean("remind",true);int days=sp.getInt("remindDays",7);
-  se.addView(setRow("show fee calculator",chipBtn(feeOn?"on":"off",feeOn,()->{sp.edit().putBoolean("showFee",!feeOn).apply();if(tabs[0]!=null)tabs[0].setVisibility(!feeOn?View.VISIBLE:View.GONE);show(3);})));
+  LinearLayout se=pcard();se.addView(label("SETTINGS"));boolean feeOn=sp.getBoolean("showFee",false),on=sp.getBoolean("remind",true);int days=sp.getInt("remindDays",7);
+  LinearLayout fl=new LinearLayout(this);fl.setOrientation(LinearLayout.VERTICAL);fl.addView(tv("fee calculator · for pianists only",14,fg));TextView fs=tv("built on a pianist's fee formulas",11,dim);fs.setPadding(0,px(2),0,0);fl.addView(fs);
+  se.addView(setRowV(fl,chipBtn(feeOn?"on":"off",feeOn,()->{sp.edit().putBoolean("showFee",!feeOn).apply();if(tabs[0]!=null)tabs[0].setVisibility(!feeOn?View.VISIBLE:View.GONE);show(3);})));
   se.addView(setRow("remind me about saved calls",chipBtn(on?"on":"off",on,()->{sp.edit().putBoolean("remind",!on).apply();if(!on)askNotify();Reminder.schedule(this);show(3);})));
   LinearLayout dd=new LinearLayout(this);dd.setGravity(Gravity.CENTER_VERTICAL);dd.addView(chipBtn("−",false,()->{sp.edit().putInt("remindDays",Math.max(1,days-1)).apply();Reminder.schedule(this);show(3);}));
   TextView dv=tv(String.valueOf(days),15,fg);dv.setPadding(px(12),0,px(12),0);dd.addView(dv);dd.addView(chipBtn("+",false,()->{sp.edit().putInt("remindDays",Math.min(60,days+1)).apply();Reminder.schedule(this);show(3);}));
