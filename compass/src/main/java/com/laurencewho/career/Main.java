@@ -1,6 +1,6 @@
 package com.laurencewho.career;
 import android.app.Activity;import android.content.*;import android.content.res.Configuration;import android.graphics.Typeface;import android.net.Uri;import android.os.*;import android.text.*;import android.view.*;import android.webkit.*;import android.widget.*;import org.json.*;import java.io.*;import java.net.*;import java.util.*;
-/** compass 0.7 (formerly who career) — generic, data-free. Native open calls / outreach / profile; fee book HTML in an isolated WebView. Everything personal stays on the device. */
+/** compass (formerly who career) — generic, data-free. Native open calls / outreach / profile; fee book HTML in an isolated WebView. Everything personal stays on the device. */
 public class Main extends Activity{
  static final String RAW="https://raw.githubusercontent.com/lollo259/who/main/data/";
  int fg,bg,dim;Typeface hv;float dp;SharedPreferences sp;FrameLayout body;TextView[] tabs=new TextView[4];int cur;WebView fee;FrameLayout feeBox;View dock;boolean dockShown=true;
@@ -203,7 +203,7 @@ public class Main extends Activity{
    for(int i=0;i<calls.length();i++){JSONObject o=calls.optJSONObject(i);if(o==null)continue;String dl=o.optString("deadline","");if(dl.length()==10&&dl.compareTo(today)<0)continue;
     if(jobs.isEmpty()||Kw.spec(o.optString("title"),hayT(o),hayD(o),nRoles(o),jobs)>0){match++;long d=daysTo(dl);if(dl.length()==10&&d>=0&&d<=7)week++;}}
    TextView st=tv(match+(match==1?" call matches you":" calls match you")+"  ·  "+week+" close this week",13,fg);st.setPadding(0,px(12),0,0);st.setAlpha(.85f);g.addView(st);}
-  l.addView(g);
+  l.addView(g);l.addView(sigCard());
   if(empty||editCv){LinearLayout e=pcard();e.setGravity(Gravity.CENTER_HORIZONTAL);
    TextView t=center(empty?"add your cv or type what you do":"your cv",17,fg);e.addView(t);
    TextView d=center("compass reads it here on your phone to find the calls that fit you. nothing is uploaded.",12,dim);d.setPadding(0,px(6),0,0);e.addView(d);
@@ -257,6 +257,35 @@ public class Main extends Activity{
     try{return new WebResourceResponse("text/html","utf-8",getAssets().open("w/fee.html"));}catch(Exception e){return null;}}
    @Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){if("who.local".equals(r.getUrl().getHost()))return false;open(r.getUrl().toString());return true;}
    @Override public boolean onRenderProcessGone(WebView v,RenderProcessGoneDetail d){feeBox.removeAllViews();try{v.destroy();}catch(Throwable t){}fee=null;feeFallback();return true;}});
+  fee.addJavascriptInterface(new Bridge(),"C");
   watch(fee);feeBox.addView(fee,new FrameLayout.LayoutParams(-1,-1));fee.loadUrl("https://who.local/fee.html");}
  void feeFallback(){TextView t=center("fee book stopped\n\ntap to reopen",14,0xff1a1a1a);t.setOnClickListener(v->buildFee());feeBox.addView(t,new FrameLayout.LayoutParams(-1,-1));}
+
+ // ---------- signature (profile) + agreement sharing (fee book)
+ boolean sigEdit;
+ View sigCard(){LinearLayout c=pcard();c.addView(label("YOUR SIGNATURE"));String saved=sp.getString("sig","");
+  if(!saved.isEmpty()&&!sigEdit){ImageView iv=new ImageView(this);iv.setImageBitmap(Sig.png(saved,px(300),px(120),fg));iv.setAdjustViewBounds(true);iv.setScaleType(ImageView.ScaleType.FIT_START);c.addView(iv,new LinearLayout.LayoutParams(-1,px(110)));
+   TextView t=tv("saved "+sp.getString("sigDate","")+" · added to every agreement",11,dim);t.setPadding(0,px(6),0,0);c.addView(t);
+   c.addView(btnRow("redo",false,()->{sigEdit=true;show(3);},"remove",()->{sp.edit().remove("sig").remove("sigDate").apply();new File(getFilesDir(),"sig.png").delete();show(3);}));return c;}
+  TextView d=tv("sign once with your finger. it is added to your agreements and stays on this device.",12,dim);c.addView(d);
+  FrameLayout box=new FrameLayout(this);android.graphics.drawable.GradientDrawable gd=new android.graphics.drawable.GradientDrawable();gd.setCornerRadius(px(18));gd.setColor(fg&0x0affffff|0x0a000000);gd.setStroke(px(1),dim&0x40ffffff,px(6),px(5));box.setBackground(gd);
+  View base=new View(this);base.setBackgroundColor(dim&0x40ffffff);FrameLayout.LayoutParams bl=new FrameLayout.LayoutParams(-1,px(1),Gravity.BOTTOM);bl.setMargins(px(18),0,px(18),px(38));box.addView(base,bl);
+  TextView hint=center("sign here",11,dim);box.addView(hint,new FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM));hint.setPadding(0,0,0,px(12));
+  Sig.Pad pad=new Sig.Pad(this,fg);pad.onChange=()->hint.setVisibility(pad.empty()?View.VISIBLE:View.GONE);box.addView(pad,new FrameLayout.LayoutParams(-1,-1));
+  LinearLayout.LayoutParams pl=new LinearLayout.LayoutParams(-1,px(170));pl.topMargin=px(14);c.addView(box,pl);
+  c.addView(btnRow("save",true,()->{if(pad.empty()){Toast.makeText(this,"sign first",Toast.LENGTH_SHORT).show();return;}String e=pad.encode();
+   String day=new java.text.SimpleDateFormat("d MMM yyyy",Locale.UK).format(new Date()).toLowerCase(Locale.ROOT);sp.edit().putString("sig",e).putString("sigDate",day).apply();
+   try(FileOutputStream o=new FileOutputStream(new File(getFilesDir(),"sig.png"))){Sig.png(e,900,360,0xff1a1a1a).compress(android.graphics.Bitmap.CompressFormat.PNG,100,o);}catch(Exception x){}
+   sigEdit=false;show(3);},"clear",pad::clear));
+  return c;}
+ String today(){return new java.text.SimpleDateFormat("yyyy-MM-dd",Locale.US).format(new Date());}
+ void shareText(String subj,String txt){Intent i=new Intent(Intent.ACTION_SEND);i.setType("text/plain");i.putExtra(Intent.EXTRA_SUBJECT,subj);i.putExtra(Intent.EXTRA_TEXT,txt);startActivity(Intent.createChooser(i,"send link"));}
+ class Bridge{
+  @JavascriptInterface public String sig(){return sp.getString("sig","");}
+  @JavascriptInterface public void link(String text,String from,String client){runOnUiThread(()->{try{String u=Sig.link(text,from,client,sp.getString("sig",""),today());
+   shareText("agreement to sign","please read and sign the agreement here:\n"+u);}catch(Exception e){Toast.makeText(Main.this,"could not make the link",Toast.LENGTH_SHORT).show();}});}
+  @JavascriptInterface public void pdf(String text,String from,String client){runOnUiThread(()->{try{File f=Sig.pdf(Main.this,text.isEmpty()?" ":text,from,client,sp.getString("sig",""),today());
+   Uri u=Uri.parse("content://com.laurencewho.career.files/"+Uri.encode(f.getName()));Intent i=new Intent(Intent.ACTION_SEND);i.setType("application/pdf");i.putExtra(Intent.EXTRA_STREAM,u);i.setClipData(ClipData.newRawUri("",u));i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+   startActivity(Intent.createChooser(i,"save pdf"));}catch(Exception e){Toast.makeText(Main.this,"could not make the pdf",Toast.LENGTH_SHORT).show();}});}
+ }
 }

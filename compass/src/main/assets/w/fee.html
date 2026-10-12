@@ -136,6 +136,11 @@
   <div class="card">
     <h2 id="agreeTitle" style="font-weight:500;margin:0 0 8px">Agreement</h2>
     <pre class="contract" id="contract"></pre>
+    <div id="signBox" style="display:none">
+      <div style="display:flex;gap:16px;margin-top:14px"><div style="flex:1;min-width:0"><div id="mySig" style="height:56px;border-bottom:1px solid var(--line,#e4e4e0);display:flex;align-items:flex-end"></div><span class="note" id="mySigCap"></span></div><div style="flex:1;min-width:0"><div style="height:56px;border-bottom:1px solid var(--line,#e4e4e0)"></div><span class="note" id="cliSigCap"></span></div></div>
+      <p class="note" id="sigNote">your signature is added automatically. the client signs on their phone.</p>
+      <div class="row-actions"><button class="solid" id="sendLink" type="button">send link</button><button id="savePdf" type="button">save pdf</button></div>
+    </div>
   </div>
 </main>
 <script>
@@ -360,6 +365,19 @@ document.getElementById("works").addEventListener("change", updateFigures);
 document.getElementById("addWork").onclick = () => { readItemsFromDom(); items.push(blankItem()); renderWorks(); };
 document.getElementById("name").oninput = updateFigures;
 document.getElementById("request").oninput = updateFigures;
+function sigText(){ const t=document.getElementById("contract").textContent.replace(/\s+$/,""); const i=t.lastIndexOf("\n\n"); return i>0?t.slice(0,i):t; }
+function sigSvg(S){ const P=S.map(a=>{const p=[];let x=0,y=0;for(let i=0;i+1<a.length;i+=2){x+=a[i];y+=a[i+1];p.push([x,y]);}return p;}); const all=P.flat(); if(!all.length) return "";
+  const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),x0=Math.min(...xs)-10,y0=Math.min(...ys)-10,w=Math.max(...xs)-x0+10,h=Math.max(...ys)-y0+10;
+  return '<svg viewBox="'+x0+' '+y0+' '+w+' '+h+'" preserveAspectRatio="xMinYMax meet" style="width:100%;height:52px"><path fill="none" stroke="currentColor" stroke-width="'+(Math.max(w,h)/110)+'" stroke-linecap="round" stroke-linejoin="round" d="'+P.map(s=>"M"+s.map(p=>p.join(" ")).join("L")+(s.length==1?"l.1 0":"")).join("")+'"/></svg>'; }
+function signUi(){ const box=document.getElementById("signBox"); if(!window.C){ box.style.display="none"; return; } box.style.display="";
+  let S=[]; try{ S=JSON.parse(C.sig()||"[]"); }catch(e){}
+  document.getElementById("mySig").innerHTML=S.length?sigSvg(S):'<span class="note" style="margin:0 0 6px">add your signature in profile</span>';
+  document.getElementById("mySigCap").textContent=SET.name||""; document.getElementById("cliSigCap").textContent=document.getElementById("name").value.trim()||"client"; }
+document.getElementById("sendLink").onclick=()=>{ if(window.C) C.link(sigText(), SET.name||"", document.getElementById("name").value.trim()); };
+document.getElementById("savePdf").onclick=()=>{ if(window.C) C.pdf(sigText(), SET.name||"", document.getElementById("name").value.trim()); };
+document.getElementById("name").addEventListener("input",()=>signUi());
+window.addEventListener("pageshow",()=>signUi()); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) signUi(); });
+signUi();
 document.getElementById("copyContract").onclick = () => {
   const text = document.getElementById("contract").textContent;
   if (text) navigator.clipboard.writeText(text);
