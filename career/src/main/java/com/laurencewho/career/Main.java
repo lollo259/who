@@ -3,18 +3,24 @@ import android.app.Activity;import android.content.*;import android.content.res.
 /** who career 0.3 — native pages (no WebView) for open calls and outreach; fee book = Laurence's own HTML in an isolated WebView that recovers if its renderer dies. */
 public class Main extends Activity{
  static final String RAW="https://raw.githubusercontent.com/lollo259/who/main/data/";
- int fg,bg,dim;Typeface hv;float dp;SharedPreferences sp;FrameLayout body;TextView[] tabs=new TextView[3];int cur;WebView fee;FrameLayout feeBox;
+ int fg,bg,dim;Typeface hv;float dp;SharedPreferences sp;FrameLayout body;TextView[] tabs=new TextView[3];int cur;WebView fee;FrameLayout feeBox;View dock;boolean dockShown=true;
+ void dock(boolean on){if(on==dockShown)return;dockShown=on;dock.animate().translationY(on?0:dock.getHeight()+px(40)).alpha(on?1f:0f).setDuration(260).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();}
+ void watch(View v){v.setOnScrollChangeListener((x,a,y,b,oy)->{int d=y-oy;if(y<=0)dock(true);else if(d>6)dock(false);else if(d<-6)dock(true);});}
  JSONArray calls,outreach;String callsUpd="",orUpd="";String region="all",kind="all",stf="all";boolean openOnly=true;
  @Override protected void onCreate(Bundle b){super.onCreate(b);
   boolean night=(getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;
   fg=night?0xffffffff:0xff111111;bg=night?0xff000000:0xfffafafa;dim=night?0x80ffffff:0x80111111;
   hv=Typeface.create("sans-serif",Typeface.NORMAL);dp=getResources().getDisplayMetrics().density;sp=getSharedPreferences("c",0);
   getWindow().getDecorView().setBackgroundColor(bg);
-  LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setBackgroundColor(bg);
-  LinearLayout nav=new LinearLayout(this);nav.setGravity(Gravity.CENTER);nav.setPadding(0,px(8),0,px(12));nav.setOnApplyWindowInsetsListener((v,in)->{v.setPadding(0,px(8),0,px(12)+in.getSystemWindowInsetBottom());return in;});
+  FrameLayout root=new FrameLayout(this);root.setBackgroundColor(bg);
+  LinearLayout nav=new LinearLayout(this);dock=nav;nav.setGravity(Gravity.CENTER);nav.setPadding(px(8),px(4),px(8),px(4));nav.setElevation(px(6));
+  android.graphics.drawable.GradientDrawable gd=new android.graphics.drawable.GradientDrawable();gd.setCornerRadius(px(28));gd.setColor(bg==0xff000000?0xf01c1c1c:0xf0ffffff);gd.setStroke(1,(fg&0x00ffffff)|0x22000000);nav.setBackground(gd);
   String[] n={"fee book","open calls","outreach"};
-  for(int i=0;i<3;i++){final int k=i;TextView t=tv(n[i],12,fg);t.setLetterSpacing(.2f);t.setPadding(px(12),px(8),px(12),px(8));t.setOnClickListener(v->show(k));tabs[i]=t;nav.addView(t);}
-  body=new FrameLayout(this);root.addView(body,new LinearLayout.LayoutParams(-1,0,1));root.addView(nav);setContentView(root);immersive();
+  for(int i=0;i<3;i++){final int k=i;TextView t=tv(n[i],12,fg);t.setLetterSpacing(.12f);t.setPadding(px(12),px(10),px(12),px(10));t.setOnClickListener(v->show(k));tabs[i]=t;nav.addView(t);}
+  body=new FrameLayout(this);root.addView(body,new FrameLayout.LayoutParams(-1,-1));
+  FrameLayout.LayoutParams dl=new FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);dl.bottomMargin=px(16);root.addView(nav,dl);
+  root.setOnApplyWindowInsetsListener((v,in)->{dl.bottomMargin=px(16)+in.getSystemWindowInsetBottom();nav.setLayoutParams(dl);return in;});
+  setContentView(root);immersive();
   calls=cached("opencalls.json",true);outreach=cached("outreach.json",false);
   show(b!=null?b.getInt("p",sp.getInt("p",0)):sp.getInt("p",0));}
  @Override protected void onResume(){super.onResume();refresh();}
@@ -24,7 +30,7 @@ public class Main extends Activity{
  @Override public void onWindowFocusChanged(boolean f){super.onWindowFocusChanged(f);if(f)immersive();}
  @Override protected void onSaveInstanceState(Bundle o){super.onSaveInstanceState(o);o.putInt("p",cur);}
  @Override public void onBackPressed(){if(cur==0&&fee!=null&&fee.canGoBack())fee.goBack();else if(cur>0)show(cur-1);else super.onBackPressed();}
- void show(int i){cur=i;sp.edit().putInt("p",i).apply();for(int j=0;j<3;j++)tabs[j].setAlpha(j==i?1f:.35f);body.removeAllViews();
+ void show(int i){cur=i;if(dock!=null)dock(true);sp.edit().putInt("p",i).apply();for(int j=0;j<3;j++)tabs[j].setAlpha(j==i?1f:.35f);body.removeAllViews();
   if(i==0)body.addView(feePage());else if(i==1)body.addView(callsPage());else body.addView(outreachPage());}
  // ---------- data: network → cache → bundled asset (never empty)
  JSONArray cached(String n,boolean c){String s=sp.getString(n,null);if(s==null)try{InputStream in=getAssets().open("w/data/"+n);s=new String(readAll(in),"UTF-8");}catch(Exception e){}
@@ -35,7 +41,7 @@ public class Main extends Activity{
    if(c.getResponseCode()==200){String s=new String(readAll(c.getInputStream()),"UTF-8");new JSONObject(s).getJSONArray("items");sp.edit().putString(n,s).apply();boolean isC=n.startsWith("open");
     runOnUiThread(()->{if(isC)calls=parse(s,true);else outreach=parse(s,false);if(!isFinishing()&&cur!=0)show(cur);});}}catch(Exception e){}}).start();}
  // ---------- shared views
- ScrollView scroller(LinearLayout l){ScrollView s=new ScrollView(this);s.setFillViewport(true);l.setOrientation(LinearLayout.VERTICAL);int side=px(26);l.setPadding(side,px(6),side,px(48));s.addView(l);return s;}
+ ScrollView scroller(LinearLayout l){ScrollView s=new ScrollView(this);s.setFillViewport(true);l.setOrientation(LinearLayout.VERTICAL);int side=px(26);l.setPadding(side,px(28),side,px(120));s.addView(l);watch(s);return s;}
  TextView center(String s,float size,int c){TextView t=tv(s,size,c);t.setGravity(Gravity.CENTER);return t;}
  HorizontalScrollView chips(String[] keys,String[] labels,String on,java.util.function.Consumer<String> pick){LinearLayout r=new LinearLayout(this);r.setGravity(Gravity.CENTER);
   for(int i=0;i<keys.length;i++){String k=keys[i];TextView t=tv(labels[i],12,fg);t.setPadding(px(10),px(6),px(10),px(6));t.setAlpha(k.equals(on)?1f:.38f);if(k.equals(on))t.setPaintFlags(t.getPaintFlags()|android.graphics.Paint.UNDERLINE_TEXT_FLAG);t.setOnClickListener(v->pick.accept(k));r.addView(t);}
@@ -114,6 +120,6 @@ public class Main extends Activity{
     try{return new WebResourceResponse("text/html","utf-8",getAssets().open("w/fee.html"));}catch(Exception e){return null;}}
    @Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){if("who.local".equals(r.getUrl().getHost()))return false;open(r.getUrl().toString());return true;}
    @Override public boolean onRenderProcessGone(WebView v,RenderProcessGoneDetail d){feeBox.removeAllViews();try{v.destroy();}catch(Throwable t){}fee=null;feeFallback();return true;}});
-  feeBox.addView(fee,new FrameLayout.LayoutParams(-1,-1));fee.loadUrl("https://who.local/fee.html");}
+  watch(fee);feeBox.addView(fee,new FrameLayout.LayoutParams(-1,-1));fee.loadUrl("https://who.local/fee.html");}
  void feeFallback(){TextView t=center("fee book stopped\n\ntap to reopen",14,0xff1a1a1a);t.setOnClickListener(v->buildFee());feeBox.addView(t,new FrameLayout.LayoutParams(-1,-1));}
 }
